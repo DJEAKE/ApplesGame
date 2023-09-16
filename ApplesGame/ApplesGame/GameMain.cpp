@@ -7,8 +7,9 @@
 const std::string RESOURCES_PATH = "Resources/";
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-const float INITIAL_SPEED = 0.1f;
+const float INITIAL_SPEED = 100.f;
 const float PLAYER_SIZE = 20.f;
+const float ACCELERATION = 20.f;
 
 int main()
 {
@@ -24,8 +25,14 @@ int main()
 	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
 	playerShape.setPosition(playerX, playerY);
 
+	sf::Clock gameCloak;
+	float lastTime = gameCloak.getElapsedTime().asSeconds();
+
 	while (window.isOpen())
 	{
+		float currentTime = gameCloak.getElapsedTime().asSeconds();
+		float deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
 		// Read events
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -52,22 +59,23 @@ int main()
 			playerDirection = 3;
 		}
 
+		playerSpeed += ACCELERATION * deltaTime;
 		// Update player state
 		if(playerDirection == 0)
 		{
-			playerX += playerSpeed;
+			playerX += playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 1)
 		{
-			playerY -= playerSpeed;
+			playerY -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 2)
 		{
-			playerX -= playerSpeed;
+			playerX -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 3)
 		{
-			playerY += playerSpeed;
+			playerY += playerSpeed * deltaTime;
 		}
 
 		// Check screen borders
