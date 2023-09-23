@@ -7,16 +7,16 @@
 const std::string RESOURCES_PATH = "Resources/";
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
+const int NUM_APPLES = 20;
 const float INITIAL_SPEED = 100.f;
 const float PLAYER_SIZE = 20.f;
 const float ACCELERATION = 20.f;
-const int NUM_APPLES = 20;
 const float APPLE_SIZE = 20.f;
 
 int main()
 {
 	// Init seed for radom
-	int seed = time(nullptr);
+	int seed = (int) time(nullptr);
 	srand(seed);
 
 	// Init Window
@@ -39,7 +39,7 @@ int main()
 	float applesX[NUM_APPLES];
 	float applesY[NUM_APPLES];
 	bool isAppleEaten[NUM_APPLES];
-	sf::RectangleShape appleShape[NUM_APPLES];
+	sf::CircleShape appleShape[NUM_APPLES];
 	
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
@@ -49,11 +49,13 @@ int main()
 		applesY[i] = rand() / (float) RAND_MAX * SCREEN_HEIGHT;
 
 		// Init apple shape
-		appleShape[i].setSize(sf::Vector2f(APPLE_SIZE, APPLE_SIZE));
+		appleShape[i].setRadius (APPLE_SIZE / 2.f);
 		appleShape[i].setFillColor(sf::Color::Green);
 		appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
 		appleShape[i].setPosition(applesX[i], applesY[i]);
 	}
+
+	int numEatenApples = 0;
 
 	// Init game clock
 	sf::Clock gameClock;
@@ -121,6 +123,26 @@ int main()
 			break;
 		}
 
+		for (int i = 0; i < NUM_APPLES; ++i)
+		{
+			if (!isAppleEaten[i])
+			{
+				float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
+					(playerY - applesY[i]) * (playerY - applesY[i]);
+				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
+				if (squareDistance <= squareRadiusSum)
+				{
+					isAppleEaten[i] = true;
+					++numEatenApples;
+				}
+			}
+		}
+
+		if (numEatenApples == NUM_APPLES)
+		{
+			window.close();
+			break;
+		}
 
 		window.clear();
 		playerShape.setPosition(playerX, playerY);
