@@ -7,24 +7,30 @@
 const std::string RESOURCES_PATH = "Resources/";
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-const int NUM_APPLES = 20;
-const float INITIAL_SPEED = 100.f;
+const int NUM_APPLES = 10;
+const int NUM_STONES = 5;
 const float PLAYER_SIZE = 20.f;
-const float ACCELERATION = 20.f;
 const float APPLE_SIZE = 20.f;
+const float STONE_SIZE = 20.f;
+const float INITIAL_SPEED = 100.f;
+const float ACCELERATION = 15.5f;
 
 int main()
 {
-	// Init seed for radom
-	int seed = (int) time(nullptr);
+	// Init seed for random func
+	int seed = (int)time(nullptr);
 	srand(seed);
+
+	// Init game clock
+	sf::Clock gameClock;
+	float lastTime = gameClock.getElapsedTime().asSeconds();
 
 	// Init Window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
-	
+
 	// Init player state
-	float playerX = SCREEN_WIDTH / 2.f;
-	float playerY = SCREEN_HEIGHT / 2.f;
+	float playerXCoordinate = SCREEN_WIDTH / 2.f;
+	float playerYCoordinate = SCREEN_HEIGHT / 2.f;
 	float playerSpeed = INITIAL_SPEED;
 	int playerDirection = 0; // 0 - Right, 1 - Up, 2 - Left, 3 - down
 
@@ -33,37 +39,56 @@ int main()
 	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
 	playerShape.setFillColor(sf::Color::Red);
 	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	playerShape.setPosition(playerX, playerY);
+	playerShape.setPosition(playerXCoordinate, playerYCoordinate);
 
-	// Init apple
-	float applesX[NUM_APPLES];
-	float applesY[NUM_APPLES];
+	// Declare apples
+	float applesXCoordinate[NUM_APPLES];
+	float applesYCoordinate[NUM_APPLES];
 	bool isAppleEaten[NUM_APPLES];
 	sf::CircleShape appleShape[NUM_APPLES];
-	
+
+
+	// Init apple state & init apple shape
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
-		// Init apple state
+		// Apple State
 		isAppleEaten[i] = false;
-		applesX[i] = rand() / (float) RAND_MAX * SCREEN_WIDTH;
-		applesY[i] = rand() / (float) RAND_MAX * SCREEN_HEIGHT;
+		applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
-		// Init apple shape
-		appleShape[i].setRadius (APPLE_SIZE / 2.f);
+		// Apple shape
+		appleShape[i].setRadius(APPLE_SIZE / 2.f);
 		appleShape[i].setFillColor(sf::Color::Green);
 		appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		appleShape[i].setPosition(applesX[i], applesY[i]);
+		appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
 	}
 
-	int numEatenApples = 0;
+	// Declare stone
+	float stoneXCoordinate[NUM_STONES];
+	float stoneYCoordinate[NUM_STONES];
+	sf::RectangleShape stoneShape[NUM_STONES];
 
-	// Init game clock
-	sf::Clock gameClock;
-	float lastTime = gameClock.getElapsedTime().asSeconds();
+
+	// Init stone state & init stone shape
+	for (int i = 0; i < NUM_STONES; ++i)
+	{
+		// stone State
+		stoneXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		stoneYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+
+		// stone shape
+		stoneShape[i].setSize(sf::Vector2f(STONE_SIZE,STONE_SIZE));
+		stoneShape[i].setFillColor(sf::Color::White);
+		stoneShape[i].setOrigin(STONE_SIZE / 2.f, STONE_SIZE / 2.f);
+		stoneShape[i].setPosition(stoneXCoordinate[i], stoneYCoordinate[i]);
+	}
 
 	// Main Loop
 	while (window.isOpen())
 	{
+		// Init eaten apple counter.
+		int numEatenApples = 0;
+
 		// Calculate time delta
 		float currentTime = gameClock.getElapsedTime().asSeconds();
 		float deltaTime = currentTime - lastTime;
@@ -79,80 +104,99 @@ int main()
 
 		// Handle input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
+		{	// 0 - Right
 			playerDirection = 0;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
+			// 1 - Up
 			playerDirection = 1;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
+			// 2 - Left
 			playerDirection = 2;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		{
+			// 3 - down
 			playerDirection = 3;
 		}
 
-		playerSpeed += ACCELERATION * deltaTime;
-
 		// Update player state
-		if(playerDirection == 0)
+		if (playerDirection == 0)
 		{
-			playerX += playerSpeed * deltaTime;
+			playerXCoordinate += playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 1)
 		{
-			playerY -= playerSpeed * deltaTime;
+			playerYCoordinate -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 2)
 		{
-			playerX -= playerSpeed * deltaTime;
+			playerXCoordinate -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 3)
 		{
-			playerY += playerSpeed * deltaTime;
+			playerYCoordinate += playerSpeed * deltaTime;
 		}
 
 		// Check screen borders
-		if (playerX - PLAYER_SIZE / 2.f < 0.f || playerX + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-			playerY - PLAYER_SIZE / 2.f < 0.f || playerY + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		if (playerXCoordinate - PLAYER_SIZE / 2.f < 0.f || playerXCoordinate + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			playerYCoordinate - PLAYER_SIZE / 2.f < 0.f || playerYCoordinate + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
 			window.close();
 			break;
 		}
 
+		// Check apple collider
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
 			if (!isAppleEaten[i])
 			{
-				float squareDistance = (playerX - applesX[i]) * (playerX - applesX[i]) +
-					(playerY - applesY[i]) * (playerY - applesY[i]);
+
+				float squareDistance = (playerXCoordinate - applesXCoordinate[i]) * (playerXCoordinate - applesXCoordinate[i]) +
+					(playerYCoordinate - applesYCoordinate[i]) * (playerYCoordinate - applesYCoordinate[i]);
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
+
 				if (squareDistance <= squareRadiusSum)
 				{
 					isAppleEaten[i] = true;
 					++numEatenApples;
+					playerSpeed += ACCELERATION;
 				}
 			}
 		}
 
-		if (numEatenApples == NUM_APPLES)
-		{
-			window.close();
-			break;
-		}
-
 		window.clear();
-		playerShape.setPosition(playerX, playerY);
+		playerShape.setPosition(playerXCoordinate, playerYCoordinate);
+
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
 			if (!isAppleEaten[i])
 			{
 				window.draw(appleShape[i]);
 			}
+			else {
+				// Init apple state
+				isAppleEaten[i] = false;
+				applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+
+				// Init apple shape
+				appleShape[i].setRadius(APPLE_SIZE / 2.f);
+				appleShape[i].setFillColor(sf::Color::Green);
+				appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+				appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
+				window.draw(appleShape[i]);
+			}
 		}
+
+		for (int i = 0; i < NUM_STONES; ++i)
+		{
+			window.draw(stoneShape[i]);
+		}
+		
 		window.draw(playerShape);
 		window.display();
 	}
