@@ -5,15 +5,15 @@
 #include <SFML/Audio.hpp>
 
 const std::string RESOURCES_PATH = "Resources/";
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 const int NUM_APPLES = 15;
-const int NUM_STONES = 3;
+const int NUM_STONES = 5;
 const float PLAYER_SIZE = 20.f;
 const float APPLE_SIZE = 20.f;
 const float STONE_SIZE = 20.f;
 const float INITIAL_SPEED = 100.f;
-const float ACCELERATION = 15.5f;
+const float ACCELERATION = 20.5f;
 
 int main()
 {
@@ -86,15 +86,27 @@ int main()
 
 	// Declare & init score text ui 
 	sf::Text scoreText;
-	sf::Font font;
-	font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
+	sf::Font scoreTextFont;
+	scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
 	float scoreTextXCoordinate = 2.5f;
 	float scoreTextYCoordinate = 2.5f;
-	scoreText.setFont(font);
+	scoreText.setFont(scoreTextFont);
 	scoreText.setCharacterSize(24);
 	scoreText.setFillColor(sf::Color::Yellow);
-	scoreText.setString("Score: ");
+	scoreText.setString("Score: 0");
 	scoreText.setPosition(scoreTextXCoordinate, scoreTextYCoordinate);
+
+	// Declare & init game over text ui 
+	sf::Text gameOverText;
+	sf::Font gameOverTextfont;
+	gameOverTextfont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
+	float gameOverTextXCoordinate = SCREEN_WIDTH / 2.f - 55.5f;
+	float gameOverTextYCoordinate = SCREEN_HEIGHT / 2.f - 55.5f;
+	gameOverText.setFont(scoreTextFont);
+	gameOverText.setCharacterSize(32);
+	gameOverText.setFillColor(sf::Color::Red);
+	gameOverText.setString("GAME OVER");
+	gameOverText.setPosition(gameOverTextXCoordinate, gameOverTextYCoordinate);
 
 	// Main Loop
 	while (window.isOpen())
@@ -155,7 +167,44 @@ int main()
 		if (playerXCoordinate - PLAYER_SIZE / 2.f < 0.f || playerXCoordinate + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
 			playerYCoordinate - PLAYER_SIZE / 2.f < 0.f || playerYCoordinate + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
+			window.draw(gameOverText);
+			window.display();
 
+			// Pause 2 second
+			sf::sleep(sf::seconds(1));
+
+			// Reset player: coordinate, speed, direction. Reset eaten apples
+			playerXCoordinate = SCREEN_WIDTH / 2;
+			playerYCoordinate = SCREEN_HEIGHT / 2;
+			playerDirection = 0;
+			playerSpeed = INITIAL_SPEED;
+			numEatenApples = 0;
+
+			// Reset apple
+			for (int i = 0; i < NUM_APPLES; ++i)
+			{
+				// Reset apple State
+				isAppleEaten[i] = false;
+				applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+
+				// Reset apple shape
+				appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
+			}
+
+			// Reset stone
+			for (int i = 0; i < NUM_STONES; ++i)
+			{
+				// Reset stone State
+				stoneXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				stoneYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+
+				// Reset stone shape
+				stoneShape[i].setPosition(stoneXCoordinate[i], stoneYCoordinate[i]);
+			}
+
+			// Reset score text UI
+			scoreText.setString("Score: 0");
 		}
 
 		// Check apple colliders
@@ -163,7 +212,6 @@ int main()
 		{
 			if (!isAppleEaten[i])
 			{
-
 				float squareDistance = (playerXCoordinate - applesXCoordinate[i]) * (playerXCoordinate - applesXCoordinate[i]) +
 					(playerYCoordinate - applesYCoordinate[i]) * (playerYCoordinate - applesYCoordinate[i]);
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
@@ -213,9 +261,6 @@ int main()
 				applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Init apple shape
-				appleShape[i].setRadius(APPLE_SIZE / 2.f);
-				appleShape[i].setFillColor(sf::Color::Green);
-				appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
 				appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
 				window.draw(appleShape[i]);
 			}
