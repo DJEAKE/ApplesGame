@@ -7,8 +7,8 @@
 const std::string RESOURCES_PATH = "Resources/";
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
-const int NUM_APPLES = 10;
-const int NUM_STONES = 5;
+const int NUM_APPLES = 15;
+const int NUM_STONES = 3;
 const float PLAYER_SIZE = 20.f;
 const float APPLE_SIZE = 20.f;
 const float STONE_SIZE = 20.f;
@@ -24,6 +24,9 @@ int main()
 	// Init game clock
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
+
+	// Init eaten apple counter.
+	int numEatenApples = 0;
 
 	// Init Window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
@@ -47,7 +50,6 @@ int main()
 	bool isAppleEaten[NUM_APPLES];
 	sf::CircleShape appleShape[NUM_APPLES];
 
-
 	// Init apple state & init apple shape
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
@@ -68,7 +70,6 @@ int main()
 	float stoneYCoordinate[NUM_STONES];
 	sf::RectangleShape stoneShape[NUM_STONES];
 
-
 	// Init stone state & init stone shape
 	for (int i = 0; i < NUM_STONES; ++i)
 	{
@@ -77,18 +78,27 @@ int main()
 		stoneYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 		// stone shape
-		stoneShape[i].setSize(sf::Vector2f(STONE_SIZE,STONE_SIZE));
+		stoneShape[i].setSize(sf::Vector2f(STONE_SIZE, STONE_SIZE));
 		stoneShape[i].setFillColor(sf::Color::White);
 		stoneShape[i].setOrigin(STONE_SIZE / 2.f, STONE_SIZE / 2.f);
 		stoneShape[i].setPosition(stoneXCoordinate[i], stoneYCoordinate[i]);
 	}
 
+	// Declare & init score text ui 
+	sf::Text scoreText;
+	sf::Font font;
+	font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
+	float scoreTextXCoordinate = 2.5f;
+	float scoreTextYCoordinate = 2.5f;
+	scoreText.setFont(font);
+	scoreText.setCharacterSize(24);
+	scoreText.setFillColor(sf::Color::Yellow);
+	scoreText.setString("Score: ");
+	scoreText.setPosition(scoreTextXCoordinate, scoreTextYCoordinate);
+
 	// Main Loop
 	while (window.isOpen())
 	{
-		// Init eaten apple counter.
-		int numEatenApples = 0;
-
 		// Calculate time delta
 		float currentTime = gameClock.getElapsedTime().asSeconds();
 		float deltaTime = currentTime - lastTime;
@@ -145,11 +155,10 @@ int main()
 		if (playerXCoordinate - PLAYER_SIZE / 2.f < 0.f || playerXCoordinate + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
 			playerYCoordinate - PLAYER_SIZE / 2.f < 0.f || playerYCoordinate + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
-			window.close();
-			break;
+
 		}
 
-		// Check apple collider
+		// Check apple colliders
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
 			if (!isAppleEaten[i])
@@ -166,6 +175,26 @@ int main()
 					playerSpeed += ACCELERATION;
 				}
 			}
+		}
+
+		// Check stone colliders
+		for (int i = 0; i < NUM_STONES; ++i)
+		{
+			float deltaX = fabs(playerXCoordinate - stoneXCoordinate[i]);
+			float deltaY = fabs(playerYCoordinate - stoneYCoordinate[i]);
+
+			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
+				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
+			{
+				window.close();
+			}
+		}
+
+		// Update ScoreText state
+		for (int i = 0; i < numEatenApples; ++i)
+		{
+			scoreText.setString("Score: " + std::to_string(numEatenApples));
+
 		}
 
 		window.clear();
@@ -196,8 +225,9 @@ int main()
 		{
 			window.draw(stoneShape[i]);
 		}
-		
+
 		window.draw(playerShape);
+		window.draw(scoreText);
 		window.display();
 	}
 
