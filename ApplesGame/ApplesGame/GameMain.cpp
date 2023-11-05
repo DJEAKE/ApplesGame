@@ -1,7 +1,4 @@
-﻿// ©2023, XYZ School. All rights reserved.
-// Authored by Aleksandr Rybalka (polterageist@gmail.com)
-
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
 const std::string RESOURCES_PATH = "Resources/";
@@ -31,70 +28,70 @@ enum class PlayerDirection : int
 	Down
 };
 
-int main()
+struct GameState
 {
-	// Init seed for random func
-	int seed = (int)time(nullptr);
-	srand(seed);
-
-	// Init game clock
-	sf::Clock gameClock;
-	float lastTime = gameClock.getElapsedTime().asSeconds();
-
-	// Init eaten apple counter.
-	int numEatenApples = 0;
-
-	// Init Window
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
-
-	// Init player state
-	Position2D playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
+	// Player data
+	Position2D playerPosition;
 	float playerSpeed = INITIAL_SPEED;
 	PlayerDirection playerDirection = PlayerDirection::Right;
-	// Init player shape
 	sf::RectangleShape playerShape;
-	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
-	playerShape.setFillColor(sf::Color::Red);
-	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	playerShape.setPosition(playerPosition.x, playerPosition.y);
 
-	// Declare apples
+	// Apples data
 	Position2D applePosition[NUM_APPLES];
-	bool isAppleEaten[NUM_APPLES];
 	sf::CircleShape appleShape[NUM_APPLES];
+
+	// Stone data
+	Position2D stonePosition[NUM_STONES];
+	sf::RectangleShape stoneShape[NUM_STONES];
+
+	// Global game data
+	int numEatenApples = 0;
+	bool isAppleEaten[NUM_APPLES];
+};
+
+void InitGame(GameState& gameState)
+{
+	// Init eaten apple counter.
+	gameState.numEatenApples = 0;
+
+	// Init player state
+	gameState.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
+	gameState.playerSpeed = INITIAL_SPEED;
+	gameState.playerDirection = PlayerDirection::Right;
+
+	// Init player shape
+	gameState.playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
+	gameState.playerShape.setFillColor(sf::Color::Red);
+	gameState.playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
+	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
 
 	// Init apple state & init apple shape
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
 		// Apple State
-		isAppleEaten[i] = false;
-		applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+		gameState.isAppleEaten[i] = false;
+		gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 		// Apple shape
-		appleShape[i].setRadius(APPLE_SIZE / 2.f);
-		appleShape[i].setFillColor(sf::Color::Green);
-		appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
+		gameState.appleShape[i].setRadius(APPLE_SIZE / 2.f);
+		gameState.appleShape[i].setFillColor(sf::Color::Green);
+		gameState.appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+		gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
 	}
-
-	// Declare stone
-	float stoneXCoordinate[NUM_STONES];
-	float stoneYCoordinate[NUM_STONES];
-	sf::RectangleShape stoneShape[NUM_STONES];
 
 	// Init stone state & init stone shape
 	for (int i = 0; i < NUM_STONES; ++i)
 	{
 		// stone State
-		stoneXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		stoneYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+		gameState.stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		gameState.stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 		// stone shape
-		stoneShape[i].setSize(sf::Vector2f(STONE_SIZE, STONE_SIZE));
-		stoneShape[i].setFillColor(sf::Color::White);
-		stoneShape[i].setOrigin(STONE_SIZE / 2.f, STONE_SIZE / 2.f);
-		stoneShape[i].setPosition(stoneXCoordinate[i], stoneYCoordinate[i]);
+		gameState.stoneShape[i].setSize(sf::Vector2f(STONE_SIZE, STONE_SIZE));
+		gameState.stoneShape[i].setFillColor(sf::Color::White);
+		gameState.stoneShape[i].setOrigin(STONE_SIZE / 2.f, STONE_SIZE / 2.f);
+		gameState.stoneShape[i].setPosition(gameState.stonePosition[i].x, gameState.stonePosition[i].y);
 	}
 
 	// Declare & init score text ui 
@@ -120,6 +117,22 @@ int main()
 	gameOverText.setFillColor(sf::Color::Red);
 	gameOverText.setString("GAME OVER");
 	gameOverText.setPosition(gameOverTextXCoordinate, gameOverTextYCoordinate);
+}
+
+int main()
+{
+	// Init seed for random func
+	int seed = (int)time(nullptr);
+	srand(seed);
+
+	// Init game clock
+	sf::Clock gameClock;
+	float lastTime = gameClock.getElapsedTime().asSeconds();
+
+	// Init Window
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
+
+	
 
 	// Main Loop
 	while (window.isOpen())
@@ -217,11 +230,11 @@ int main()
 			for (int i = 0; i < NUM_STONES; ++i)
 			{
 				// Reset stone State
-				stoneXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				stoneYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Reset stone shape
-				stoneShape[i].setPosition(stoneXCoordinate[i], stoneYCoordinate[i]);
+				stoneShape[i].setPosition(stonePosition[i].x, stonePosition[i].y);
 			}
 
 			// Reset score text UI
@@ -249,8 +262,8 @@ int main()
 		// Check stone colliders
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			float deltaX = fabs(playerPosition.x - stoneXCoordinate[i]);
-			float deltaY = fabs(playerPosition.y - stoneYCoordinate[i]);
+			float deltaX = fabs(playerPosition.x - stonePosition[i].x);
+			float deltaY = fabs(playerPosition.y - stonePosition[i].y);
 
 			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
 				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
