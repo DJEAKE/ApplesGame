@@ -15,10 +15,20 @@ const float STONE_SIZE = 20.f;
 const float INITIAL_SPEED = 100.f;
 const float ACCELERATION = 20.5f;
 
-struct Position2D
+struct Vector2D
 {
 	float x = 0;
 	float y = 0;
+};
+
+typedef Vector2D Position2D;
+
+enum class PlayerDirection : int
+{
+	Right = 0,
+	Up,
+	Left,
+	Down
 };
 
 int main()
@@ -40,8 +50,7 @@ int main()
 	// Init player state
 	Position2D playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
 	float playerSpeed = INITIAL_SPEED;
-	int playerDirection = 0; // 0 - Right, 1 - Up, 2 - Left, 3 - down
-
+	PlayerDirection playerDirection = PlayerDirection::Right;
 	// Init player shape
 	sf::RectangleShape playerShape;
 	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
@@ -50,8 +59,7 @@ int main()
 	playerShape.setPosition(playerPosition.x, playerPosition.y);
 
 	// Declare apples
-	float applesXCoordinate[NUM_APPLES];
-	float applesYCoordinate[NUM_APPLES];
+	Position2D applePosition[NUM_APPLES];
 	bool isAppleEaten[NUM_APPLES];
 	sf::CircleShape appleShape[NUM_APPLES];
 
@@ -60,14 +68,14 @@ int main()
 	{
 		// Apple State
 		isAppleEaten[i] = false;
-		applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+		applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+		applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 		// Apple shape
 		appleShape[i].setRadius(APPLE_SIZE / 2.f);
 		appleShape[i].setFillColor(sf::Color::Green);
 		appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
+		appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
 	}
 
 	// Declare stone
@@ -132,40 +140,48 @@ int main()
 		// Handle input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{	// 0 - Right
-			playerDirection = 0;
+			playerDirection = PlayerDirection::Right;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
 			// 1 - Up
-			playerDirection = 1;
+			playerDirection = PlayerDirection::Up;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
 			// 2 - Left
-			playerDirection = 2;
+			playerDirection = PlayerDirection::Left;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		{
 			// 3 - down
-			playerDirection = 3;
+			playerDirection = PlayerDirection::Down;
 		}
 
+
 		// Update player state
-		if (playerDirection == 0)
+		switch (playerDirection)
 		{
-			playerPosition.x += playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 1)
-		{
-			playerPosition.y -= playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 2)
-		{
-			playerPosition.x -= playerSpeed * deltaTime;
-		}
-		else if (playerDirection == 3)
-		{
-			playerPosition.y += playerSpeed * deltaTime;
+			case PlayerDirection::Right:
+			{
+				playerPosition.x += playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Up:
+			{
+				playerPosition.y -= playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Left:
+			{
+				playerPosition.x -= playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Down:
+			{
+				playerPosition.y += playerSpeed * deltaTime;
+				break;
+			}
 		}
 
 		// Check screen borders
@@ -181,7 +197,7 @@ int main()
 			// Reset player: coordinate, speed, direction. Reset eaten apples
 			playerPosition.x = SCREEN_WIDTH / 2;
 			playerPosition.y = SCREEN_HEIGHT / 2;
-			playerDirection = 0;
+			playerDirection = PlayerDirection::Right;
 			playerSpeed = INITIAL_SPEED;
 			numEatenApples = 0;
 
@@ -190,11 +206,11 @@ int main()
 			{
 				// Reset apple State
 				isAppleEaten[i] = false;
-				applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Reset apple shape
-				appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
+				appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
 			}
 
 			// Reset stone
@@ -217,8 +233,8 @@ int main()
 		{
 			if (!isAppleEaten[i])
 			{
-				float squareDistance = (playerPosition.x - applesXCoordinate[i]) * (playerPosition.x - applesXCoordinate[i]) +
-					(playerPosition.y - applesYCoordinate[i]) * (playerPosition.y - applesYCoordinate[i]);
+				float squareDistance = (playerPosition.x - applePosition[i].x) * (playerPosition.x - applePosition[i].x) +
+					(playerPosition.y - applePosition[i].y) * (playerPosition.y - applePosition[i].y);
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
 
 				if (squareDistance <= squareRadiusSum)
@@ -262,11 +278,11 @@ int main()
 			else {
 				// Init apple state
 				isAppleEaten[i] = false;
-				applesXCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				applesYCoordinate[i] = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Init apple shape
-				appleShape[i].setPosition(applesXCoordinate[i], applesYCoordinate[i]);
+				appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
 				window.draw(appleShape[i]);
 			}
 		}
