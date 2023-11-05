@@ -15,6 +15,12 @@ const float STONE_SIZE = 20.f;
 const float INITIAL_SPEED = 100.f;
 const float ACCELERATION = 20.5f;
 
+struct Position2D
+{
+	float x = 0;
+	float y = 0;
+};
+
 int main()
 {
 	// Init seed for random func
@@ -32,8 +38,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
 
 	// Init player state
-	float playerXCoordinate = SCREEN_WIDTH / 2.f;
-	float playerYCoordinate = SCREEN_HEIGHT / 2.f;
+	Position2D playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
 	float playerSpeed = INITIAL_SPEED;
 	int playerDirection = 0; // 0 - Right, 1 - Up, 2 - Left, 3 - down
 
@@ -42,7 +47,7 @@ int main()
 	playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
 	playerShape.setFillColor(sf::Color::Red);
 	playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	playerShape.setPosition(playerXCoordinate, playerYCoordinate);
+	playerShape.setPosition(playerPosition.x, playerPosition.y);
 
 	// Declare apples
 	float applesXCoordinate[NUM_APPLES];
@@ -148,24 +153,24 @@ int main()
 		// Update player state
 		if (playerDirection == 0)
 		{
-			playerXCoordinate += playerSpeed * deltaTime;
+			playerPosition.x += playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 1)
 		{
-			playerYCoordinate -= playerSpeed * deltaTime;
+			playerPosition.y -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 2)
 		{
-			playerXCoordinate -= playerSpeed * deltaTime;
+			playerPosition.x -= playerSpeed * deltaTime;
 		}
 		else if (playerDirection == 3)
 		{
-			playerYCoordinate += playerSpeed * deltaTime;
+			playerPosition.y += playerSpeed * deltaTime;
 		}
 
 		// Check screen borders
-		if (playerXCoordinate - PLAYER_SIZE / 2.f < 0.f || playerXCoordinate + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-			playerYCoordinate - PLAYER_SIZE / 2.f < 0.f || playerYCoordinate + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		if (playerPosition.x - PLAYER_SIZE / 2.f < 0.f || playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			playerPosition.y - PLAYER_SIZE / 2.f < 0.f || playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
 			window.draw(gameOverText);
 			window.display();
@@ -174,8 +179,8 @@ int main()
 			sf::sleep(sf::seconds(1));
 
 			// Reset player: coordinate, speed, direction. Reset eaten apples
-			playerXCoordinate = SCREEN_WIDTH / 2;
-			playerYCoordinate = SCREEN_HEIGHT / 2;
+			playerPosition.x = SCREEN_WIDTH / 2;
+			playerPosition.y = SCREEN_HEIGHT / 2;
 			playerDirection = 0;
 			playerSpeed = INITIAL_SPEED;
 			numEatenApples = 0;
@@ -212,8 +217,8 @@ int main()
 		{
 			if (!isAppleEaten[i])
 			{
-				float squareDistance = (playerXCoordinate - applesXCoordinate[i]) * (playerXCoordinate - applesXCoordinate[i]) +
-					(playerYCoordinate - applesYCoordinate[i]) * (playerYCoordinate - applesYCoordinate[i]);
+				float squareDistance = (playerPosition.x - applesXCoordinate[i]) * (playerPosition.x - applesXCoordinate[i]) +
+					(playerPosition.y - applesYCoordinate[i]) * (playerPosition.y - applesYCoordinate[i]);
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
 
 				if (squareDistance <= squareRadiusSum)
@@ -228,8 +233,8 @@ int main()
 		// Check stone colliders
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			float deltaX = fabs(playerXCoordinate - stoneXCoordinate[i]);
-			float deltaY = fabs(playerYCoordinate - stoneYCoordinate[i]);
+			float deltaX = fabs(playerPosition.x - stoneXCoordinate[i]);
+			float deltaY = fabs(playerPosition.y - stoneYCoordinate[i]);
 
 			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
 				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
@@ -246,7 +251,7 @@ int main()
 		}
 
 		window.clear();
-		playerShape.setPosition(playerXCoordinate, playerYCoordinate);
+		playerShape.setPosition(playerPosition.x, playerPosition.y);
 
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
