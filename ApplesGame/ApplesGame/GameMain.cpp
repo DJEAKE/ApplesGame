@@ -47,6 +47,12 @@ struct GameState
 	// Global game data
 	int numEatenApples = 0;
 	bool isAppleEaten[NUM_APPLES];
+
+	sf::Text scoreText;
+	sf::Font scoreTextFont;
+
+	sf::Text gameOverText;
+	sf::Font gameOverTextfont;
 };
 
 void InitGame(GameState& gameState)
@@ -95,28 +101,26 @@ void InitGame(GameState& gameState)
 	}
 
 	// Declare & init score text ui 
-	sf::Text scoreText;
-	sf::Font scoreTextFont;
-	scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
+
+	gameState.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
 	float scoreTextXCoordinate = 2.5f;
 	float scoreTextYCoordinate = 2.5f;
-	scoreText.setFont(scoreTextFont);
-	scoreText.setCharacterSize(24);
-	scoreText.setFillColor(sf::Color::Yellow);
-	scoreText.setString("Score: 0");
-	scoreText.setPosition(scoreTextXCoordinate, scoreTextYCoordinate);
+	gameState.scoreText.setFont(gameState.scoreTextFont);
+	gameState.scoreText.setCharacterSize(24);
+	gameState.scoreText.setFillColor(sf::Color::Yellow);
+	gameState.scoreText.setString("Score: 0");
+	gameState.scoreText.setPosition(scoreTextXCoordinate, scoreTextYCoordinate);
 
 	// Declare & init game over text ui 
-	sf::Text gameOverText;
-	sf::Font gameOverTextfont;
-	gameOverTextfont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
+
+	gameState.gameOverTextfont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
 	float gameOverTextXCoordinate = SCREEN_WIDTH / 2.f - 55.5f;
 	float gameOverTextYCoordinate = SCREEN_HEIGHT / 2.f - 55.5f;
-	gameOverText.setFont(scoreTextFont);
-	gameOverText.setCharacterSize(32);
-	gameOverText.setFillColor(sf::Color::Red);
-	gameOverText.setString("GAME OVER");
-	gameOverText.setPosition(gameOverTextXCoordinate, gameOverTextYCoordinate);
+	gameState.gameOverText.setFont(gameState.scoreTextFont);
+	gameState.gameOverText.setCharacterSize(32);
+	gameState.gameOverText.setFillColor(sf::Color::Red);
+	gameState.gameOverText.setString("GAME OVER");
+	gameState.gameOverText.setPosition(gameOverTextXCoordinate, gameOverTextYCoordinate);
 }
 
 int main()
@@ -132,6 +136,8 @@ int main()
 	// Init Window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
 
+	GameState gameState;
+	InitGame(gameState);
 	
 
 	// Main Loop
@@ -150,111 +156,112 @@ int main()
 				window.close();
 		}
 
+
 		// Handle input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{	// 0 - Right
-			playerDirection = PlayerDirection::Right;
+			gameState.playerDirection = PlayerDirection::Right;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
 			// 1 - Up
-			playerDirection = PlayerDirection::Up;
+			gameState.playerDirection = PlayerDirection::Up;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
 			// 2 - Left
-			playerDirection = PlayerDirection::Left;
+			gameState.playerDirection = PlayerDirection::Left;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		{
 			// 3 - down
-			playerDirection = PlayerDirection::Down;
+			gameState.playerDirection = PlayerDirection::Down;
 		}
 
 
 		// Update player state
-		switch (playerDirection)
+		switch (gameState.playerDirection)
 		{
 			case PlayerDirection::Right:
 			{
-				playerPosition.x += playerSpeed * deltaTime;
+				gameState.playerPosition.x += gameState.playerSpeed * deltaTime;
 				break;
 			}
 			case PlayerDirection::Up:
 			{
-				playerPosition.y -= playerSpeed * deltaTime;
+				gameState.playerPosition.y -= gameState.playerSpeed * deltaTime;
 				break;
 			}
 			case PlayerDirection::Left:
 			{
-				playerPosition.x -= playerSpeed * deltaTime;
+				gameState.playerPosition.x -= gameState.playerSpeed * deltaTime;
 				break;
 			}
 			case PlayerDirection::Down:
 			{
-				playerPosition.y += playerSpeed * deltaTime;
+				gameState.playerPosition.y += gameState.playerSpeed * deltaTime;
 				break;
 			}
 		}
 
 		// Check screen borders
-		if (playerPosition.x - PLAYER_SIZE / 2.f < 0.f || playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-			playerPosition.y - PLAYER_SIZE / 2.f < 0.f || playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		if (gameState.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			gameState.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
-			window.draw(gameOverText);
+			window.draw(gameState.gameOverText);
 			window.display();
 
 			// Pause 2 second
 			sf::sleep(sf::seconds(1));
 
 			// Reset player: coordinate, speed, direction. Reset eaten apples
-			playerPosition.x = SCREEN_WIDTH / 2;
-			playerPosition.y = SCREEN_HEIGHT / 2;
-			playerDirection = PlayerDirection::Right;
-			playerSpeed = INITIAL_SPEED;
-			numEatenApples = 0;
+			gameState.playerPosition.x = SCREEN_WIDTH / 2;
+			gameState.playerPosition.y = SCREEN_HEIGHT / 2;
+			gameState.playerDirection = PlayerDirection::Right;
+			gameState.playerSpeed = INITIAL_SPEED;
+			gameState.numEatenApples = 0;
 
 			// Reset apple
 			for (int i = 0; i < NUM_APPLES; ++i)
 			{
 				// Reset apple State
-				isAppleEaten[i] = false;
-				applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.isAppleEaten[i] = false;
+				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Reset apple shape
-				appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
+				gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
 			}
 
 			// Reset stone
 			for (int i = 0; i < NUM_STONES; ++i)
 			{
 				// Reset stone State
-				stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				gameState.stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Reset stone shape
-				stoneShape[i].setPosition(stonePosition[i].x, stonePosition[i].y);
+				gameState.stoneShape[i].setPosition(gameState.stonePosition[i].x, gameState.stonePosition[i].y);
 			}
 
 			// Reset score text UI
-			scoreText.setString("Score: 0");
+			gameState.scoreText.setString("Score: 0");
 		}
 
 		// Check apple colliders
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (!isAppleEaten[i])
+			if (!gameState.isAppleEaten[i])
 			{
-				float squareDistance = (playerPosition.x - applePosition[i].x) * (playerPosition.x - applePosition[i].x) +
-					(playerPosition.y - applePosition[i].y) * (playerPosition.y - applePosition[i].y);
+				float squareDistance = (gameState.playerPosition.x - gameState.applePosition[i].x) * (gameState.playerPosition.x - gameState.applePosition[i].x) +
+					(gameState.playerPosition.y - gameState.applePosition[i].y) * (gameState.playerPosition.y - gameState.applePosition[i].y);
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
 
 				if (squareDistance <= squareRadiusSum)
 				{
-					isAppleEaten[i] = true;
-					++numEatenApples;
-					playerSpeed += ACCELERATION;
+					gameState.isAppleEaten[i] = true;
+					++gameState.numEatenApples;
+					gameState.playerSpeed += ACCELERATION;
 				}
 			}
 		}
@@ -262,8 +269,8 @@ int main()
 		// Check stone colliders
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			float deltaX = fabs(playerPosition.x - stonePosition[i].x);
-			float deltaY = fabs(playerPosition.y - stonePosition[i].y);
+			float deltaX = fabs(gameState.playerPosition.x - gameState.stonePosition[i].x);
+			float deltaY = fabs(gameState.playerPosition.y - gameState.stonePosition[i].y);
 
 			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
 				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
@@ -273,40 +280,40 @@ int main()
 		}
 
 		// Update ScoreText state
-		for (int i = 0; i < numEatenApples; ++i)
+		for (int i = 0; i < gameState.numEatenApples; ++i)
 		{
-			scoreText.setString("Score: " + std::to_string(numEatenApples));
+			gameState.scoreText.setString("Score: " + std::to_string(gameState.numEatenApples));
 
 		}
 
 		window.clear();
-		playerShape.setPosition(playerPosition.x, playerPosition.y);
+		gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
 
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (!isAppleEaten[i])
+			if (!gameState.isAppleEaten[i])
 			{
-				window.draw(appleShape[i]);
+				window.draw(gameState.appleShape[i]);
 			}
 			else {
 				// Init apple state
-				isAppleEaten[i] = false;
-				applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.isAppleEaten[i] = false;
+				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 
 				// Init apple shape
-				appleShape[i].setPosition(applePosition[i].x, applePosition[i].y);
-				window.draw(appleShape[i]);
+				gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
+				window.draw(gameState.appleShape[i]);
 			}
 		}
 
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			window.draw(stoneShape[i]);
+			window.draw(gameState.stoneShape[i]);
 		}
 
-		window.draw(playerShape);
-		window.draw(scoreText);
+		window.draw(gameState.playerShape);
+		window.draw(gameState.scoreText);
 		window.display();
 	}
 
