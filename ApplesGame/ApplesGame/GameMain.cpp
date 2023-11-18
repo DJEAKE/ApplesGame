@@ -32,8 +32,8 @@ struct GameState
 {
 	// Player data
 	Position2D playerPosition;
-	float playerSpeed = INITIAL_SPEED;
-	PlayerDirection playerDirection = PlayerDirection::Right;
+	float playerSpeed;
+	PlayerDirection playerDirection;
 	sf::RectangleShape playerShape;
 
 	// Apples data
@@ -45,14 +45,18 @@ struct GameState
 	sf::RectangleShape stoneShape[NUM_STONES];
 
 	// Global game data
-	int numEatenApples = 0;
+	int numEatenApples;
 	bool isAppleEaten[NUM_APPLES];
 
+	// UI data
 	sf::Text scoreText;
 	sf::Font scoreTextFont;
-
 	sf::Text gameOverText;
 	sf::Font gameOverTextfont;
+	float scoreTextXCoordinate;
+	float scoreTextYCoordinate;
+	float gameOverTextXCoordinate;
+	float gameOverTextYCoordinate;
 };
 
 void InitGame(GameState& gameState)
@@ -100,27 +104,25 @@ void InitGame(GameState& gameState)
 		gameState.stoneShape[i].setPosition(gameState.stonePosition[i].x, gameState.stonePosition[i].y);
 	}
 
-	// Declare & init score text ui 
-
+	// Init score text ui 
 	gameState.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
-	float scoreTextXCoordinate = 2.5f;
-	float scoreTextYCoordinate = 2.5f;
+	gameState.scoreTextXCoordinate = 2.5f;
+	gameState.scoreTextYCoordinate = 2.5f;
 	gameState.scoreText.setFont(gameState.scoreTextFont);
 	gameState.scoreText.setCharacterSize(24);
 	gameState.scoreText.setFillColor(sf::Color::Yellow);
 	gameState.scoreText.setString("Score: 0");
-	gameState.scoreText.setPosition(scoreTextXCoordinate, scoreTextYCoordinate);
+	gameState.scoreText.setPosition(gameState.scoreTextXCoordinate, gameState.scoreTextYCoordinate);
 
-	// Declare & init game over text ui 
-
+	// Init game over text ui 
 	gameState.gameOverTextfont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
-	float gameOverTextXCoordinate = SCREEN_WIDTH / 2.f - 55.5f;
-	float gameOverTextYCoordinate = SCREEN_HEIGHT / 2.f - 55.5f;
+	gameState.gameOverTextXCoordinate = SCREEN_WIDTH / 2.f - 55.5f;
+	gameState.gameOverTextYCoordinate = SCREEN_HEIGHT / 2.f - 55.5f;
 	gameState.gameOverText.setFont(gameState.scoreTextFont);
 	gameState.gameOverText.setCharacterSize(32);
 	gameState.gameOverText.setFillColor(sf::Color::Red);
 	gameState.gameOverText.setString("GAME OVER");
-	gameState.gameOverText.setPosition(gameOverTextXCoordinate, gameOverTextYCoordinate);
+	gameState.gameOverText.setPosition(gameState.gameOverTextXCoordinate, gameState.gameOverTextYCoordinate);
 }
 
 int main()
