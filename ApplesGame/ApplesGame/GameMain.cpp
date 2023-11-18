@@ -32,9 +32,9 @@ struct GameState
 {
 	// Player data
 	Position2D playerPosition;
-	float playerSpeed;
 	PlayerDirection playerDirection;
 	sf::RectangleShape playerShape;
+	float playerSpeed;
 
 	// Apples data
 	Position2D applePosition[NUM_APPLES];
@@ -47,6 +47,8 @@ struct GameState
 	// Global game data
 	int numEatenApples;
 	bool isAppleEaten[NUM_APPLES];
+	float deltaTime;
+	bool isGameFinished;
 
 	// UI data
 	sf::Text scoreText;
@@ -63,6 +65,7 @@ void InitGame(GameState& gameState)
 {
 	// Init eaten apple counter.
 	gameState.numEatenApples = 0;
+	gameState.isGameFinished = false;
 
 	// Init player state
 	gameState.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
@@ -125,40 +128,10 @@ void InitGame(GameState& gameState)
 	gameState.gameOverText.setPosition(gameState.gameOverTextXCoordinate, gameState.gameOverTextYCoordinate);
 }
 
-int main()
+void UpdateGame(GameState& gameState, float deltaTime)
 {
-	// Init seed for random func
-	int seed = (int)time(nullptr);
-	srand(seed);
-
-	// Init game clock
-	sf::Clock gameClock;
-	float lastTime = gameClock.getElapsedTime().asSeconds();
-
-	// Init Window
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
-
-	GameState gameState;
-	InitGame(gameState);
-	
-
-	// Main Loop
-	while (window.isOpen())
+	if (!gameState.isGameFinished)
 	{
-		// Calculate time delta
-		float currentTime = gameClock.getElapsedTime().asSeconds();
-		float deltaTime = currentTime - lastTime;
-		lastTime = currentTime;
-
-		// Read events
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-
-
 		// Handle input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{	// 0 - Right
@@ -180,38 +153,38 @@ int main()
 			gameState.playerDirection = PlayerDirection::Down;
 		}
 
-
 		// Update player state
 		switch (gameState.playerDirection)
 		{
-			case PlayerDirection::Right:
-			{
-				gameState.playerPosition.x += gameState.playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Up:
-			{
-				gameState.playerPosition.y -= gameState.playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Left:
-			{
-				gameState.playerPosition.x -= gameState.playerSpeed * deltaTime;
-				break;
-			}
-			case PlayerDirection::Down:
-			{
-				gameState.playerPosition.y += gameState.playerSpeed * deltaTime;
-				break;
-			}
+		case PlayerDirection::Right:
+		{
+			gameState.playerPosition.x += gameState.playerSpeed * gameState.deltaTime;
+			break;
+		}
+		case PlayerDirection::Up:
+		{
+			gameState.playerPosition.y -= gameState.playerSpeed * gameState.deltaTime;
+			break;
+		}
+		case PlayerDirection::Left:
+		{
+			gameState.playerPosition.x -= gameState.playerSpeed * gameState.deltaTime;
+			break;
+		}
+		case PlayerDirection::Down:
+		{
+			gameState.playerPosition.y += gameState.playerSpeed * gameState.deltaTime;
+			break;
+		}
 		}
 
 		// Check screen borders
 		if (gameState.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
 			gameState.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
-			window.draw(gameState.gameOverText);
-			window.display();
+
+			//gawindow.draw(gameState.gameOverText);
+			//window.display();
 
 			// Pause 2 second
 			sf::sleep(sf::seconds(1));
@@ -266,6 +239,12 @@ int main()
 					gameState.playerSpeed += ACCELERATION;
 				}
 			}
+			else 
+			{
+				gameState.isAppleEaten[i] = false;
+				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+			}
 		}
 
 		// Check stone colliders
@@ -277,47 +256,77 @@ int main()
 			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
 				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
 			{
-				window.close();
+				gameState.isGameFinished = true;
 			}
 		}
 
 		// Update ScoreText state
 		for (int i = 0; i < gameState.numEatenApples; ++i)
 		{
-			gameState.scoreText.setString("Score: " + std::to_string(gameState.numEatenApples));
-
 		}
-
-		window.clear();
-		gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
-
-		for (int i = 0; i < NUM_APPLES; ++i)
-		{
-			if (!gameState.isAppleEaten[i])
-			{
-				window.draw(gameState.appleShape[i]);
-			}
-			else {
-				// Init apple state
-				gameState.isAppleEaten[i] = false;
-				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
-
-				// Init apple shape
-				gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
-				window.draw(gameState.appleShape[i]);
-			}
-		}
-
-		for (int i = 0; i < NUM_STONES; ++i)
-		{
-			window.draw(gameState.stoneShape[i]);
-		}
-
-		window.draw(gameState.playerShape);
-		window.draw(gameState.scoreText);
-		window.display();
 	}
 
+}
+
+void DrawGame(GameState& gameState, sf::RenderWindow& window)
+{
+	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
+	window.draw(gameState.playerShape);
+	gameState.scoreText.setString("Score: " + std::to_string(gameState.numEatenApples));
+	window.draw(gameState.scoreText);
+	gameState.gameOverText.setPosition(gameState.gameOverTextXCoordinate, gameState.gameOverTextYCoordinate);
+	// window.draw(gameState.gameOverText);
+
+	for (int i = 0; i < NUM_APPLES; ++i)
+	{
+		gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
+		window.draw(gameState.appleShape[i]);
+	}
+
+	for (int i = 0; i < NUM_STONES; ++i)
+	{
+		gameState.stoneShape[i].setPosition(gameState.stonePosition[i].x, gameState.stonePosition[i].y);
+		window.draw(gameState.stoneShape[i]);
+	}
+}
+
+int main()
+{
+	// Init seed for random func
+	int seed = (int)time(nullptr);
+	srand(seed);
+
+	// Init Window
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game by DJEAKE <3");
+
+	GameState gameState;
+	InitGame(gameState);
+
+	// Init game clock
+	sf::Clock gameClock;
+	float lastTime = gameClock.getElapsedTime().asSeconds();
+
+	// Main Loop
+	while (window.isOpen())
+	{
+		// Calculate Time
+		float currentTime = gameClock.getElapsedTime().asSeconds();
+		gameState.deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+
+		// Read events
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
+
+		UpdateGame(gameState, gameState.deltaTime);
+		window.clear();
+		DrawGame(gameState, window);
+		window.display();
+
+	}
 	return 0;
 }
