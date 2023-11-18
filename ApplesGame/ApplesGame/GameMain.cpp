@@ -46,8 +46,8 @@ struct GameState
 
 	// Global game data
 	int numEatenApples;
-	bool isAppleEaten[NUM_APPLES];
 	float deltaTime;
+	bool isAppleEaten[NUM_APPLES];
 	bool isGameFinished;
 
 	// UI data
@@ -182,7 +182,6 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		if (gameState.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
 			gameState.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
-
 			//gawindow.draw(gameState.gameOverText);
 			//window.display();
 
@@ -228,8 +227,9 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		{
 			if (!gameState.isAppleEaten[i])
 			{
-				float squareDistance = (gameState.playerPosition.x - gameState.applePosition[i].x) * (gameState.playerPosition.x - gameState.applePosition[i].x) +
-					(gameState.playerPosition.y - gameState.applePosition[i].y) * (gameState.playerPosition.y - gameState.applePosition[i].y);
+				const auto distanceX = gameState.playerPosition.x - gameState.applePosition[i].x;
+				const auto distanceY = gameState.playerPosition.y - gameState.applePosition[i].y;
+				const auto squareDistance = distanceX * distanceX + distanceY * distanceY;
 				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
 
 				if (squareDistance <= squareRadiusSum)
@@ -239,7 +239,7 @@ void UpdateGame(GameState& gameState, float deltaTime)
 					gameState.playerSpeed += ACCELERATION;
 				}
 			}
-			else 
+			else
 			{
 				gameState.isAppleEaten[i] = false;
 				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
@@ -265,7 +265,6 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		{
 		}
 	}
-
 }
 
 void DrawGame(GameState& gameState, sf::RenderWindow& window)
@@ -326,7 +325,6 @@ int main()
 		window.clear();
 		DrawGame(gameState, window);
 		window.display();
-
 	}
 	return 0;
 }
