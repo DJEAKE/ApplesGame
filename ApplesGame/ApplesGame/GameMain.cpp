@@ -20,6 +20,29 @@ struct Vector2D
 
 typedef Vector2D Position2D;
 
+Position2D GetRandomPositioInScreen()
+{
+	Position2D result;
+	result.x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
+	result.y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+	return result;
+} 
+
+bool IsRectanglesCollide(Position2D rect1Position, Vector2D rect1Size, Position2D rect2Position, Vector2D rect2Size)
+{
+	float deltaX = fabs(rect1Position.x - rect2Position.x);
+	float deltaY = fabs(rect1Position.y - rect2Position.y);
+	return (deltaX <= (rect2Size.x + rect1Size.x) / 2.f && deltaY <= (rect2Size.y + rect1Size.y) / 2.f);
+}
+
+bool IsCircleCollide(Position2D circle1Position, float circle1Radius, Position2D circle2Position, float circle2Radius)
+{
+	const auto distanceX = circle1Position.x - circle2Position.x;
+	const auto distanceY = circle1Position.y - circle2Position.y;
+	const auto squareDistance = distanceX * distanceX + distanceY * distanceY;
+	float squareRadiusSum = (circle1Radius + circle2Radius) * (circle1Radius + circle2Radius) / 4;
+	return (squareDistance <= squareRadiusSum);
+}
 enum class PlayerDirection : int
 {
 	Right = 0,
@@ -83,8 +106,7 @@ void InitGame(GameState& gameState)
 	{
 		// Apple State
 		gameState.isAppleEaten[i] = false;
-		gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+		gameState.applePosition[i] = GetRandomPositioInScreen();
 
 		// Apple shape
 		gameState.appleShape[i].setRadius(APPLE_SIZE / 2.f);
@@ -97,8 +119,7 @@ void InitGame(GameState& gameState)
 	for (int i = 0; i < NUM_STONES; ++i)
 	{
 		// stone State
-		gameState.stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-		gameState.stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+		gameState.stonePosition[i] = GetRandomPositioInScreen();
 
 		// stone shape
 		gameState.stoneShape[i].setSize(sf::Vector2f(STONE_SIZE, STONE_SIZE));
@@ -200,8 +221,7 @@ void UpdateGame(GameState& gameState, float deltaTime)
 			{
 				// Reset apple State
 				gameState.isAppleEaten[i] = false;
-				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.applePosition[i] = GetRandomPositioInScreen();
 
 				// Reset apple shape
 				gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
@@ -211,8 +231,7 @@ void UpdateGame(GameState& gameState, float deltaTime)
 			for (int i = 0; i < NUM_STONES; ++i)
 			{
 				// Reset stone State
-				gameState.stonePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				gameState.stonePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.stonePosition[i] = GetRandomPositioInScreen();
 
 				// Reset stone shape
 				gameState.stoneShape[i].setPosition(gameState.stonePosition[i].x, gameState.stonePosition[i].y);
@@ -227,12 +246,7 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		{
 			if (!gameState.isAppleEaten[i])
 			{
-				const auto distanceX = gameState.playerPosition.x - gameState.applePosition[i].x;
-				const auto distanceY = gameState.playerPosition.y - gameState.applePosition[i].y;
-				const auto squareDistance = distanceX * distanceX + distanceY * distanceY;
-				float squareRadiusSum = (APPLE_SIZE + PLAYER_SIZE) * (APPLE_SIZE + PLAYER_SIZE) / 4;
-
-				if (squareDistance <= squareRadiusSum)
+				if (IsCircleCollide(gameState.playerPosition, PLAYER_SIZE, gameState.applePosition[i], APPLE_SIZE / 2.f))
 				{
 					gameState.isAppleEaten[i] = true;
 					++gameState.numEatenApples;
@@ -242,19 +256,14 @@ void UpdateGame(GameState& gameState, float deltaTime)
 			else
 			{
 				gameState.isAppleEaten[i] = false;
-				gameState.applePosition[i].x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
-				gameState.applePosition[i].y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
+				gameState.applePosition[i] = GetRandomPositioInScreen();
 			}
 		}
 
 		// Check stone colliders
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			float deltaX = fabs(gameState.playerPosition.x - gameState.stonePosition[i].x);
-			float deltaY = fabs(gameState.playerPosition.y - gameState.stonePosition[i].y);
-
-			if (deltaX <= (STONE_SIZE + PLAYER_SIZE) / 2.f &&
-				deltaY <= (STONE_SIZE + PLAYER_SIZE) / 2.f)
+			if (IsRectanglesCollide(gameState.playerPosition, { PLAYER_SIZE, PLAYER_SIZE }, gameState.stonePosition[i], {STONE_SIZE, STONE_SIZE}))
 			{
 				gameState.isGameFinished = true;
 			}
