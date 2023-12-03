@@ -26,7 +26,7 @@ Position2D GetRandomPositioInScreen()
 	result.x = rand() / (float)RAND_MAX * SCREEN_WIDTH;
 	result.y = rand() / (float)RAND_MAX * SCREEN_HEIGHT;
 	return result;
-} 
+}
 
 bool IsRectanglesCollide(Position2D rect1Position, Vector2D rect1Size, Position2D rect2Position, Vector2D rect2Size)
 {
@@ -53,16 +53,8 @@ enum class PlayerDirection : int
 
 struct GameState
 {
-	// Player data
-	Position2D playerPosition;
-	PlayerDirection playerDirection;
-	sf::RectangleShape playerShape;
-	float playerSpeed;
-
-	// Apples data
-	Position2D applePosition[NUM_APPLES];
-	sf::CircleShape appleShape[NUM_APPLES];
-
+	Player player;
+	Apple apple[NUM_APPLES];
 	// Stone data
 	Position2D stonePosition[NUM_STONES];
 	sf::RectangleShape stoneShape[NUM_STONES];
@@ -70,7 +62,6 @@ struct GameState
 	// Global game data
 	int numEatenApples;
 	float deltaTime;
-	bool isAppleEaten[NUM_APPLES];
 	bool isGameFinished;
 
 	// UI data
@@ -84,36 +75,60 @@ struct GameState
 	float gameOverTextYCoordinate;
 };
 
+struct Player
+{
+	// Player data
+	Position2D playerPosition;
+	PlayerDirection playerDirection = PlayerDirection::Right;;
+	sf::RectangleShape playerShape;
+	float playerSpeed = INITIAL_SPEED;
+};
+
+struct Apple
+{
+	// Apples data
+	Position2D applePosition[NUM_APPLES];
+	sf::CircleShape appleShape[NUM_APPLES];
+	bool isAppleEaten[NUM_APPLES];
+};
+
+void InitPlayer(Player& player)
+{
+	// Init player state
+	player.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
+	player.playerSpeed = INITIAL_SPEED;
+	player.playerDirection = PlayerDirection::Right;
+
+	// Init player shape
+	player.playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
+	player.playerShape.setFillColor(sf::Color::Red);
+	player.playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
+	player.playerShape.setPosition(player.playerPosition.x, player.playerPosition.y);
+}
+
+void InitApple(Apple& apple)
+{
+	// Init apple state & init apple shape
+	for (int i = 0; i < NUM_APPLES; ++i)
+	{
+		// Apple State
+		apple.applePosition[i] = GetRandomPositioInScreen();
+		apple.isAppleEaten[i] = false;
+
+		// Apple shape
+		apple.appleShape[i].setRadius(APPLE_SIZE / 2.f);
+		apple.appleShape[i].setFillColor(sf::Color::Green);
+		apple.appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
+		apple.appleShape[i].setPosition(apple.applePosition[i].x, apple.applePosition[i].y);
+	}
+
+}
+
 void InitGame(GameState& gameState)
 {
 	// Init eaten apple counter.
 	gameState.numEatenApples = 0;
 	gameState.isGameFinished = false;
-
-	// Init player state
-	gameState.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
-	gameState.playerSpeed = INITIAL_SPEED;
-	gameState.playerDirection = PlayerDirection::Right;
-
-	// Init player shape
-	gameState.playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
-	gameState.playerShape.setFillColor(sf::Color::Red);
-	gameState.playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
-
-	// Init apple state & init apple shape
-	for (int i = 0; i < NUM_APPLES; ++i)
-	{
-		// Apple State
-		gameState.isAppleEaten[i] = false;
-		gameState.applePosition[i] = GetRandomPositioInScreen();
-
-		// Apple shape
-		gameState.appleShape[i].setRadius(APPLE_SIZE / 2.f);
-		gameState.appleShape[i].setFillColor(sf::Color::Green);
-		gameState.appleShape[i].setOrigin(APPLE_SIZE / 2.f, APPLE_SIZE / 2.f);
-		gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
-	}
 
 	// Init stone state & init stone shape
 	for (int i = 0; i < NUM_STONES; ++i)
@@ -156,52 +171,52 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		// Handle input
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{	// 0 - Right
-			gameState.playerDirection = PlayerDirection::Right;
+			gameState.player.playerDirection = PlayerDirection::Right;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
 			// 1 - Up
-			gameState.playerDirection = PlayerDirection::Up;
+			gameState.player.playerDirection = PlayerDirection::Up;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
 			// 2 - Left
-			gameState.playerDirection = PlayerDirection::Left;
+			gameState.player.playerDirection = PlayerDirection::Left;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		{
 			// 3 - down
-			gameState.playerDirection = PlayerDirection::Down;
+			gameState.player.playerDirection = PlayerDirection::Down;
 		}
 
 		// Update player state
-		switch (gameState.playerDirection)
+		switch (gameState.player.playerDirection)
 		{
 		case PlayerDirection::Right:
 		{
-			gameState.playerPosition.x += gameState.playerSpeed * gameState.deltaTime;
+			gameState.player.playerPosition.x += gameState.player.playerSpeed * gameState.deltaTime;
 			break;
 		}
 		case PlayerDirection::Up:
 		{
-			gameState.playerPosition.y -= gameState.playerSpeed * gameState.deltaTime;
+			gameState.player.playerPosition.y -= gameState.player.playerSpeed * gameState.deltaTime;
 			break;
 		}
 		case PlayerDirection::Left:
 		{
-			gameState.playerPosition.x -= gameState.playerSpeed * gameState.deltaTime;
+			gameState.player.playerPosition.x -= gameState.player.playerSpeed * gameState.deltaTime;
 			break;
 		}
 		case PlayerDirection::Down:
 		{
-			gameState.playerPosition.y += gameState.playerSpeed * gameState.deltaTime;
+			gameState.player.playerPosition.y += gameState.player.playerSpeed * gameState.deltaTime;
 			break;
 		}
 		}
 
 		// Check screen borders
-		if (gameState.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
-			gameState.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
+		if (gameState.player.playerPosition.x - PLAYER_SIZE / 2.f < 0.f || gameState.player.playerPosition.x + PLAYER_SIZE / 2.f > SCREEN_WIDTH ||
+			gameState.player.playerPosition.y - PLAYER_SIZE / 2.f < 0.f || gameState.player.playerPosition.y + PLAYER_SIZE / 2.f > SCREEN_HEIGHT)
 		{
 			//gawindow.draw(gameState.gameOverText);
 			//window.display();
@@ -210,21 +225,21 @@ void UpdateGame(GameState& gameState, float deltaTime)
 			sf::sleep(sf::seconds(1));
 
 			// Reset player: coordinate, speed, direction. Reset eaten apples
-			gameState.playerPosition.x = SCREEN_WIDTH / 2;
-			gameState.playerPosition.y = SCREEN_HEIGHT / 2;
-			gameState.playerDirection = PlayerDirection::Right;
-			gameState.playerSpeed = INITIAL_SPEED;
+			gameState.player.playerPosition.x = SCREEN_WIDTH / 2;
+			gameState.player.playerPosition.y = SCREEN_HEIGHT / 2;
+			gameState.player.playerDirection = PlayerDirection::Right;
+			gameState.player.playerSpeed = INITIAL_SPEED;
 			gameState.numEatenApples = 0;
 
 			// Reset apple
 			for (int i = 0; i < NUM_APPLES; ++i)
 			{
 				// Reset apple State
-				gameState.isAppleEaten[i] = false;
-				gameState.applePosition[i] = GetRandomPositioInScreen();
+				gameState.apple[i].isAppleEaten[i] = false;
+				gameState.apple[i].applePosition[i] = GetRandomPositioInScreen();
 
 				// Reset apple shape
-				gameState.appleShape[i].setPosition(gameState.applePosition[i].x, gameState.applePosition[i].y);
+				gameState.apple[i].appleShape.setPosition(gameState.apple[i].applePosition.x, gameState.apple[i].applePosition.y);
 			}
 
 			// Reset stone
@@ -244,26 +259,26 @@ void UpdateGame(GameState& gameState, float deltaTime)
 		// Check apple colliders
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (!gameState.isAppleEaten[i])
+			if (!gameState.apple[i].isAppleEaten[i])
 			{
-				if (IsCircleCollide(gameState.playerPosition, PLAYER_SIZE, gameState.applePosition[i], APPLE_SIZE / 2.f))
+				if (IsCircleCollide(gameState.player.playerPosition, PLAYER_SIZE, gameState.apple[i].applePosition[i], APPLE_SIZE / 2.f))
 				{
-					gameState.isAppleEaten[i] = true;
+					gameState.apple[i].isAppleEaten[i] = true;
 					++gameState.numEatenApples;
-					gameState.playerSpeed += ACCELERATION;
+					gameState.player.playerSpeed += ACCELERATION;
 				}
 			}
 			else
 			{
-				gameState.isAppleEaten[i] = false;
-				gameState.applePosition[i] = GetRandomPositioInScreen();
+				gameState.apple[i].isAppleEaten[i] = false;
+				gameState.apple[i].applePosition[i] = GetRandomPositioInScreen();
 			}
 		}
 
 		// Check stone colliders
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
-			if (IsRectanglesCollide(gameState.playerPosition, { PLAYER_SIZE, PLAYER_SIZE }, gameState.stonePosition[i], {STONE_SIZE, STONE_SIZE}))
+			if (IsRectanglesCollide(gameState.player.playerPosition, { PLAYER_SIZE, PLAYER_SIZE }, gameState.stonePosition[i], { STONE_SIZE, STONE_SIZE }))
 			{
 				gameState.isGameFinished = true;
 			}
@@ -278,8 +293,8 @@ void UpdateGame(GameState& gameState, float deltaTime)
 
 void DrawGame(GameState& gameState, sf::RenderWindow& window)
 {
-	gameState.playerShape.setPosition(gameState.playerPosition.x, gameState.playerPosition.y);
-	window.draw(gameState.playerShape);
+	player.playerShape.setPosition(player.playerPosition.x, player.playerPosition.y);
+	window.draw(player.playerShape);
 	gameState.scoreText.setString("Score: " + std::to_string(gameState.numEatenApples));
 	window.draw(gameState.scoreText);
 	gameState.gameOverText.setPosition(gameState.gameOverTextXCoordinate, gameState.gameOverTextYCoordinate);
@@ -309,6 +324,7 @@ int main()
 
 	GameState gameState;
 	InitGame(gameState);
+	Player player;
 
 	// Init game clock
 	sf::Clock gameClock;
@@ -332,7 +348,7 @@ int main()
 
 		UpdateGame(gameState, gameState.deltaTime);
 		window.clear();
-		DrawGame(gameState, window);
+		DrawGame(gameState,window);
 		window.display();
 	}
 	return 0;
