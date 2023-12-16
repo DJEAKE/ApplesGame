@@ -1,15 +1,23 @@
 #include "Player.h"
-
-void InitPlayer(Player& player)
+#include "Game.h"
+namespace ApplesGame
 {
-	// Init player state
-	player.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
-	player.playerSpeed = INITIAL_SPEED;
-	player.playerDirection = PlayerDirection::Right;
+	void InitPlayer(Player& player, const Game& game)
+	{
+		// Init player state
+		player.playerPosition = { SCREEN_WIDTH / 2.f , SCREEN_HEIGHT / 2.f };
+		player.playerSpeed = INITIAL_SPEED;
+		player.playerDirection = PlayerDirection::Right;
+		
+		// Init player Sprite
+		player.sprite.setTexture(game.playerTexture);
+		SetSpriteSize(player.sprite, PLAYER_SIZE, PLAYER_SIZE);
+	}
 
-	// Init player shape
-	player.playerShape.setSize(sf::Vector2f(PLAYER_SIZE, PLAYER_SIZE));
-	player.playerShape.setFillColor(sf::Color::Red);
-	player.playerShape.setOrigin(PLAYER_SIZE / 2.f, PLAYER_SIZE / 2.f);
-	player.playerShape.setPosition(player.playerPosition.x, player.playerPosition.y);
+	void DrawPlayer(Player& player, sf::RenderWindow& window)
+	{
+		player.sprite.setPosition(player.playerPosition.x, player.playerPosition.y);
+		window.draw(player.sprite);
+	}
 }
+

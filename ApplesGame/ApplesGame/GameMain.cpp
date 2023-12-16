@@ -1,32 +1,15 @@
 ﻿#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <cassert>
+
 #include "Math.h"
 #include "Player.h"
 #include "Constans.h"
 #include "Apple.h"
 #include "Stone.h"
+#include "Game.h"
 
-struct Game
-{
-	Player player;
-	Apple apple[NUM_APPLES];
-	Stone stone[NUM_STONES];
-
-	// Global game data
-	int numEatenApples;
-	float deltaTime;
-	bool isGameFinished = false;
-
-	// UI data
-	sf::Text scoreText;
-	sf::Font scoreTextFont;
-	sf::Text gameOverText;
-	sf::Font gameOverTextfont;
-	float scoreTextXCoordinate;
-	float scoreTextYCoordinate;
-	float gameOverTextXCoordinate;
-	float gameOverTextYCoordinate;
-};
+using namespace ApplesGame;
 
 void RestartGame(Game& game)
 {
@@ -34,7 +17,7 @@ void RestartGame(Game& game)
 	game.numEatenApples = 0;
 	game.isGameFinished = false;
 
-	InitPlayer(game.player);
+	InitPlayer(game.player, game);
 
 	// Init apple state & init apple shape
 	for (int i = 0; i < NUM_APPLES; ++i)
@@ -52,6 +35,8 @@ void RestartGame(Game& game)
 
 void InitGame(Game& game)
 {
+	assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\Player.png"));
+
 	// Init score text ui 
 	game.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
 	game.scoreTextXCoordinate = 2.5f;
@@ -205,8 +190,7 @@ void UpdateGame(Game& game, float deltaTime)
 
 void DrawGame(Game& game, sf::RenderWindow& window)
 {
-	game.player.playerShape.setPosition(game.player.playerPosition.x, game.player.playerPosition.y);
-	window.draw(game.player.playerShape);
+	DrawPlayer(game.player, window);
 	game.scoreText.setString("Score: " + std::to_string(game.numEatenApples));
 	window.draw(game.scoreText);
 	game.gameOverText.setPosition(game.gameOverTextXCoordinate, game.gameOverTextYCoordinate);
@@ -224,7 +208,6 @@ void DrawGame(Game& game, sf::RenderWindow& window)
 		window.draw(game.stone[i].stoneShape);
 	}
 }
-
 
 int main()
 {

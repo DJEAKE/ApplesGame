@@ -39,5 +39,8 @@
     <ClInclude Include="Stone.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

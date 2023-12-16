@@ -3,10 +3,13 @@
 #include "Math.h"
 #include "Constans.h"
 
-struct Stone
+namespace ApplesGame
 {
-	Position2D stonePosition;
-	sf::RectangleShape stoneShape;
-};
+	struct Stone
+	{
+		Position2D stonePosition;
+		sf::RectangleShape stoneShape;
+	};
 
-void InitStone(Stone& stone);;
+	void InitStone(Stone& stone);
+}
