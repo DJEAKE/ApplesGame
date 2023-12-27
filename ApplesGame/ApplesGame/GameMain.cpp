@@ -35,7 +35,7 @@ void RestartGame(Game& game)
 
 void InitGame(Game& game)
 {
-	assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\Player.png"));
+	assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
 
 	// Init score text ui 
 	game.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
@@ -229,6 +229,9 @@ int main()
 	// Main Loop
 	while (window.isOpen())
 	{
+		// Reduce framerate to not spam CPU and GPU
+		sf::sleep(sf::microseconds(16));
+
 		// Calculate Time
 		float currentTime = gameClock.getElapsedTime().asSeconds();
 		game.deltaTime = currentTime - lastTime;

@@ -12,6 +12,7 @@ namespace ApplesGame
 		// Init player Sprite
 		player.sprite.setTexture(game.playerTexture);
 		SetSpriteSize(player.sprite, PLAYER_SIZE, PLAYER_SIZE);
+		SetSpriteRelativeOriginOrigin(player.sprite, 0.5f, 0.5f);
 	}
 
 	void DrawPlayer(Player& player, sf::RenderWindow& window)
