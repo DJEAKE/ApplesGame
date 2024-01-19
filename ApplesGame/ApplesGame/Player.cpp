@@ -19,6 +19,17 @@ namespace ApplesGame
 	{
 		player.sprite.setPosition(player.playerPosition.x, player.playerPosition.y);
 		window.draw(player.sprite);
+
+		if (player.playerDirection == PlayerDirection::Left)
+		{
+			SetSpriteSize(player.sprite, -PLAYER_SIZE, PLAYER_SIZE);
+			player.sprite.setRotation(0.f);
+		}
+		else
+		{
+			SetSpriteSize(player.sprite, PLAYER_SIZE, PLAYER_SIZE);
+			player.sprite.setRotation((float)player.playerDirection * -90.f);
+		}
 	}
 }
 

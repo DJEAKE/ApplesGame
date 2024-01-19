@@ -1,4 +1,6 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Player.h"
 #include "Apple.h"
 #include "Stone.h"
@@ -18,6 +20,10 @@ namespace ApplesGame
 
 		// Resources
 		sf::Texture playerTexture;
+		sf::Texture appleTexture;
+		sf::Texture stoneTexture;
+		sf::SoundBuffer eatAppleSoundBuffer;
+		sf::SoundBuffer gameOverSoundBuffer;
 
 		// UI data
 		sf::Text scoreText;

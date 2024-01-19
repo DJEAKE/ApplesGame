@@ -1,7 +1,5 @@
-﻿#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+﻿
 #include <cassert>
-
 #include "Math.h"
 #include "Player.h"
 #include "Constans.h"
@@ -22,20 +20,24 @@ void RestartGame(Game& game)
 	// Init apple state & init apple shape
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
-		InitApple(game.apple[i]);
+		InitApple(game.apple[i], game);
 		game.apple[i].isAppleEaten = false;
 	};
 
 	// Init stone state & init stone shape
 	for (int i = 0; i < NUM_STONES; ++i)
 	{
-		InitStone(game.stone[i]);
+		InitStone(game.stone[i], game);
 	};
 }
 
 void InitGame(Game& game)
 {
 	assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
+	assert(game.appleTexture.loadFromFile(RESOURCES_PATH + "\\Apple.png"));
+	assert(game.stoneTexture.loadFromFile(RESOURCES_PATH + "\\Rock.png"));
+	assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.wav"));
+	assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.wav"));
 
 	// Init score text ui 
 	game.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
@@ -135,7 +137,7 @@ void UpdateGame(Game& game, float deltaTime)
 				game.apple[i].applePosition = GetRandomPositioInScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 				// Reset apple shape
-				game.apple[i].appleShape.setPosition(game.apple[i].applePosition.x, game.apple[i].applePosition.y);
+				game.apple[i].sprite.setPosition(game.apple[i].applePosition.x, game.apple[i].applePosition.y);
 			}
 
 			// Reset stone
@@ -145,7 +147,7 @@ void UpdateGame(Game& game, float deltaTime)
 				game.stone[i].stonePosition = GetRandomPositioInScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 				// Reset stone shape
-				game.stone[i].stoneShape.setPosition(game.stone[i].stonePosition.x, game.stone[i].stonePosition.y);
+				game.stone[i].sprite.setPosition(game.stone[i].stonePosition.x, game.stone[i].stonePosition.y);
 			}
 
 			// Reset score text UI
@@ -198,14 +200,14 @@ void DrawGame(Game& game, sf::RenderWindow& window)
 
 	for (int i = 0; i < NUM_APPLES; ++i)
 	{
-		game.apple[i].appleShape.setPosition(game.apple[i].applePosition.x, game.apple[i].applePosition.y);
-		window.draw(game.apple[i].appleShape);
+		game.apple[i].sprite.setPosition(game.apple[i].applePosition.x, game.apple[i].applePosition.y);
+		window.draw(game.apple[i].sprite);
 	}
 
 	for (int i = 0; i < NUM_STONES; ++i)
 	{
-		game.stone[i].stoneShape.setPosition(game.stone[i].stonePosition.x, game.stone[i].stonePosition.y);
-		window.draw(game.stone[i].stoneShape);
+		game.stone[i].sprite.setPosition(game.stone[i].stonePosition.x, game.stone[i].stonePosition.y);
+		window.draw(game.stone[i].sprite);
 	}
 }
 

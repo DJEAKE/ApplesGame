@@ -5,11 +5,13 @@
 
 namespace ApplesGame
 {
+	struct Game;
 	struct Stone
 	{
 		Position2D stonePosition;
-		sf::RectangleShape stoneShape;
+		sf::Sprite sprite;
 	};
 
-	void InitStone(Stone& stone);
+	void InitStone(Stone& stone,  const Game& game);
+	void DrawStone(Stone& stone, sf::RenderWindow& window);
 }
