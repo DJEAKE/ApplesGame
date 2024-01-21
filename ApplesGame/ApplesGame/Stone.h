@@ -14,4 +14,6 @@ namespace ApplesGame
 
 	void InitStone(Stone& stone,  const Game& game);
 	void DrawStone(Stone& stone, sf::RenderWindow& window);
+	void SetStobePosition(Stone& stone, const Position2D& position);
+	Rectangle GetStoneCollider(const Stone& stone);
 }

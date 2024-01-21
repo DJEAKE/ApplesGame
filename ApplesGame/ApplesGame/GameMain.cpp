@@ -39,6 +39,9 @@ void InitGame(Game& game)
 	assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.wav"));
 	assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.wav"));
 
+	game.appleEatSound.setBuffer(game.eatAppleSoundBuffer);
+	game.deathSound.setBuffer(game.gameOverSoundBuffer);
+
 	// Init score text ui 
 	game.scoreTextFont.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Bold.ttf");
 	game.scoreTextXCoordinate = 2.5f;
@@ -121,6 +124,7 @@ void UpdateGame(Game& game, float deltaTime)
 
 			// Pause 2 second
 			sf::sleep(sf::seconds(1));
+			game.deathSound.play();
 
 			// Reset player: coordinate, speed, direction. Reset eaten apples
 			game.player.playerPosition.x = (float)SCREEN_WIDTH / 2;
@@ -164,6 +168,7 @@ void UpdateGame(Game& game, float deltaTime)
 					game.apple[i].isAppleEaten = true;
 					++game.numEatenApples;
 					game.player.playerSpeed += ACCELERATION;
+					game.appleEatSound.play();
 				}
 			}
 			else
@@ -180,6 +185,7 @@ void UpdateGame(Game& game, float deltaTime)
 			{
 				game.isGameFinished = true;
 				RestartGame(game);
+				game.deathSound.play();
 			}
 		}
 

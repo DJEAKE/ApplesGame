@@ -17,6 +17,8 @@ namespace ApplesGame
 		int numEatenApples;
 		float deltaTime;
 		bool isGameFinished = false;
+		sf::Sound appleEatSound;
+		sf::Sound deathSound;
 
 		// Resources
 		sf::Texture playerTexture;
