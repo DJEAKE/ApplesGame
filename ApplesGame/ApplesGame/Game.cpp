@@ -52,7 +52,7 @@ namespace ApplesGame
 		// Find player collisions with apples
 		for (int i = 0; i < NUM_APPLES; ++i)
 		{
-			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apples[i])))
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apple[i])))
 			{
 				SetApplePosition(game.apple[i], GetRandomPositionInRectangle(game.screenRect));
 				++game.numEatenApples;

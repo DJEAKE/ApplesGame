@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Game.h"
+
 namespace ApplesGame
 {
 	void InitPlayer(Player& player, const Game& game)

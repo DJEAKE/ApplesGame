@@ -31,7 +31,6 @@ namespace ApplesGame
 	float GetPlayerSpeed(const Player& player);
 	Rectangle GetPlayerCollider(const Player& player);
 	void UpdatePlayer(Player& player, float deltaTime);
-
 	void DrawPlayer(Player& player, sf::RenderWindow& window);
 
 }

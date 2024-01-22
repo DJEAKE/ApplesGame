@@ -1,5 +1,6 @@
 #include "Stone.h"
 #include "Game.h"
+
 namespace ApplesGame
 {
 	void InitStone(Stone& stone, const Game& game)
