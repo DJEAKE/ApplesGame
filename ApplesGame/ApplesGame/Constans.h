@@ -13,5 +13,5 @@ namespace ApplesGame
 	const float STONE_SIZE = 20.f;
 	const float INITIAL_SPEED = 100.f;
 	const float ACCELERATION = 20.5f;
-
+	const float PAUSE_LENGTH = 3.f;
 }

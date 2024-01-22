@@ -22,6 +22,9 @@
     <ClCompile Include="Stone.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">

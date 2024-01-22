@@ -9,6 +9,7 @@ namespace ApplesGame
 {
 	struct Game
 	{
+		Rectangle screenRect;
 		Player player;
 		Apple apple[NUM_APPLES];
 		Stone stone[NUM_STONES];
@@ -17,8 +18,10 @@ namespace ApplesGame
 		int numEatenApples;
 		float deltaTime;
 		bool isGameFinished = false;
+		float timeSinceGameFinish = 0.f;
 		sf::Sound appleEatSound;
 		sf::Sound deathSound;
+		sf::RectangleShape background;
 
 		// Resources
 		sf::Texture playerTexture;
@@ -28,13 +31,18 @@ namespace ApplesGame
 		sf::SoundBuffer gameOverSoundBuffer;
 
 		// UI data
+		sf::Font font;
 		sf::Text scoreText;
-		sf::Font scoreTextFont;
+		sf::Text controlsHintText;
 		sf::Text gameOverText;
-		sf::Font gameOverTextfont;
-		float scoreTextXCoordinate;
-		float scoreTextYCoordinate;
-		float gameOverTextXCoordinate;
-		float gameOverTextYCoordinate;
+		sf::Text gameOverScoreText;
 	};
+	void InitGame(Game& game);
+	void UpdateGame(Game& game, float deltaTime);
+	void DrawGame(Game& game, sf::RenderWindow& window);
+	void DeinializeGame(Game& game);
+	void StartPlayingState(Game& game);
+	void UpdatePlayingState(Game& game, float deltaTime);
+	void StartGameoverState(Game& game);
+	void UpdateGameoverState(Game& game, float deltaTime);
 }

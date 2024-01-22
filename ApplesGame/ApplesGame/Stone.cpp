@@ -15,7 +15,7 @@ namespace ApplesGame
 		window.draw(stone.sprite);
 	}
 
-	void SetStobePosition(Stone& stone, const Position2D& position)
+	void SetStonePosition(Stone& stone, const Position2D& position)
 	{
 		stone.stonePosition = position;
 	}
