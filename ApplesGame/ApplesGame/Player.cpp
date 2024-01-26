@@ -46,26 +46,26 @@ namespace ApplesGame
 	{
 		switch (player.playerDirection)
 		{
-		case PlayerDirection::Right:
-		{
-			player.playerPosition.x += player.playerSpeed * deltaTime;
-			break;
-		}
-		case PlayerDirection::Up:
-		{
-			player.playerPosition.y -= player.playerSpeed * deltaTime;
-			break;
-		}
-		case PlayerDirection::Left:
-		{
-			player.playerPosition.x -= player.playerSpeed * deltaTime;
-			break;
-		}
-		case PlayerDirection::Down:
-		{
-			player.playerPosition.y += player.playerSpeed * deltaTime;
-			break;
-		}
+			case PlayerDirection::Right:
+			{
+				player.playerPosition.x += player.playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Up:
+			{
+				player.playerPosition.y -= player.playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Left:
+			{
+				player.playerPosition.x -= player.playerSpeed * deltaTime;
+				break;
+			}
+			case PlayerDirection::Down:
+			{
+				player.playerPosition.y += player.playerSpeed * deltaTime;
+				break;
+			}
 		}
 	}
 

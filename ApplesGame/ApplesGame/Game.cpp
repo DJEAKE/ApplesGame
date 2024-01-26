@@ -24,7 +24,7 @@ namespace ApplesGame
 		game.numEatenApples = 0;
 		game.isGameFinished = false;
 		game.timeSinceGameFinish = 0;
-		game.scoreText.setString("Apples eaten: " + std::to_string(game.numEatenApples));
+		game.scoreText.setString("Score: " + std::to_string(game.numEatenApples));
 	}
 
 	void UpdatePlayingState(Game& game, float deltaTime)
@@ -58,7 +58,7 @@ namespace ApplesGame
 				++game.numEatenApples;
 				SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 				game.appleEatSound.play();
-				game.scoreText.setString("Apples eaten: " + std::to_string(game.numEatenApples));
+				game.scoreText.setString("Score: " + std::to_string(game.numEatenApples));
 			}
 		}
 
