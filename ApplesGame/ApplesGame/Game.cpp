@@ -15,7 +15,7 @@ namespace ApplesGame
 			SetApplePosition(game.apple[i], GetRandomPositionInRectangle(game.screenRect));
 		}
 
-		// Init rocks
+		// Init stones
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
 			SetStonePosition(game.stone[i], GetRandomPositionInRectangle(game.screenRect));
@@ -62,7 +62,7 @@ namespace ApplesGame
 			}
 		}
 
-		// Find player collisions with rocks
+		// Find player collisions with stones
 		for (int i = 0; i < NUM_STONES; ++i)
 		{
 			if (DoShapesCollide(GetPlayerCollider(game.player), GetStoneCollider(game.stone[i])))
@@ -108,8 +108,8 @@ namespace ApplesGame
 		assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
 		assert(game.appleTexture.loadFromFile(RESOURCES_PATH + "\\Apple.png"));
 		assert(game.stoneTexture.loadFromFile(RESOURCES_PATH + "\\Rock.png"));
-		assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.wav"));
-		assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.wav"));
+		assert(game.eatAppleSoundBuffer.loadFromFile(RESOURCES_PATH + "\\AppleEat.ogg"));
+		assert(game.gameOverSoundBuffer.loadFromFile(RESOURCES_PATH + "\\Death.ogg"));
 		assert(game.font.loadFromFile(RESOURCES_PATH + "\\Fonts\\Roboto-Bold.ttf"));
 
 		// Init game objects

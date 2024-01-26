@@ -5,7 +5,6 @@ namespace ApplesGame
 {
 	void InitApple(Apple& apple, const Game& game)
 	{
-		apple.isAppleEaten = false;
 		apple.sprite.setTexture(game.appleTexture);
 		SetSpriteSize(apple.sprite, APPLE_SIZE, APPLE_SIZE);
 		SetSpriteRelativeOriginOrigin(apple.sprite, 0.5f, 0.5f);

@@ -37,6 +37,7 @@ namespace ApplesGame
 		sf::Text gameOverText;
 		sf::Text gameOverScoreText;
 	};
+
 	void InitGame(Game& game);
 	void UpdateGame(Game& game, float deltaTime);
 	void DrawGame(Game& game, sf::RenderWindow& window);

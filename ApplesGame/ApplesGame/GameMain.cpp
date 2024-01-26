@@ -1,7 +1,4 @@
-﻿// ©2023, XYZ School. All rights reserved.
-// Authored by Aleksandr Rybalka (polterageist@gmail.com)
-
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Constans.h"
 #include "Game.h"
@@ -13,7 +10,7 @@ int main()
 	int seed = (int)time(nullptr);
 	srand(seed);
 	// Init window
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game!");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 
 	// Game initialization
 	Game game;

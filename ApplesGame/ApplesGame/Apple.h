@@ -8,10 +8,8 @@ namespace ApplesGame
 	struct Game;
 	struct Apple
 	{
-		// Apples data
 		Position2D applePosition;
 		sf::Sprite sprite;
-		bool isAppleEaten = false;
 	};
 
 	void InitApple(Apple& apple, const Game& game);
