@@ -10,15 +10,15 @@ namespace ApplesGame
 		SetPlayerDirection(game.player, PlayerDirection::Right);
 
 		// Init apples
-		for (int i = 0; i < NUM_APPLES; ++i)
+		for (Apple& apple : game.apple)
 		{
-			SetApplePosition(game.apple[i], GetRandomPositionInRectangle(game.screenRect));
+			SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
 		}
 
 		// Init stones
-		for (int i = 0; i < NUM_STONES; ++i)
+		for (Stone& stone : game.stone)
 		{
-			SetStonePosition(game.stone[i], GetRandomPositionInRectangle(game.screenRect));
+			SetStonePosition(stone, GetRandomPositionInRectangle(game.screenRect));
 		}
 
 		game.numEatenApples = 0;
@@ -50,11 +50,11 @@ namespace ApplesGame
 		UpdatePlayer(game.player, deltaTime);
 
 		// Find player collisions with apples
-		for (int i = 0; i < NUM_APPLES; ++i)
+		for (Apple& apple : game.apple)
 		{
-			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(game.apple[i])))
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(apple)))
 			{
-				SetApplePosition(game.apple[i], GetRandomPositionInRectangle(game.screenRect));
+				SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
 				++game.numEatenApples;
 				SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 				game.appleEatSound.play();
@@ -63,9 +63,9 @@ namespace ApplesGame
 		}
 
 		// Find player collisions with stones
-		for (int i = 0; i < NUM_STONES; ++i)
+		for (Stone& stone : game.stone)
 		{
-			if (DoShapesCollide(GetPlayerCollider(game.player), GetStoneCollider(game.stone[i])))
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetStoneCollider(stone)))
 			{
 				StartGameoverState(game);
 			}
@@ -118,15 +118,15 @@ namespace ApplesGame
 		InitPlayer(game.player, game);
 
 		// Init apples
-		for (int i = 0; i < NUM_APPLES; ++i)
+		for (Apple& apple : game.apple)
 		{
-			InitApple(game.apple[i], game);
+			InitApple(apple, game);
 		}
 
-		// Init rocks
-		for (int i = 0; i < NUM_STONES; ++i)
+		// Init stone
+		for (Stone& stones : game.stone)
 		{
-			InitStone(game.stone[i], game);
+			InitStone(stones, game);
 		}
 
 		// Init background
@@ -185,14 +185,15 @@ namespace ApplesGame
 
 		// Draw game objects
 		DrawPlayer(game.player, window);
-		for (int i = 0; i < NUM_APPLES; ++i)
+
+		for (Apple& apple : game.apple)
 		{
-			DrawApple(game.apple[i], window);
+			DrawApple(apple, window);
 		}
 
-		for (int i = 0; i < NUM_STONES; ++i)
+		for (Stone& stone : game.stone)
 		{
-			DrawStone(game.stone[i], window);
+			DrawStone(stone, window);
 		}
 
 		// Draw texts
@@ -206,10 +207,5 @@ namespace ApplesGame
 			window.draw(game.gameOverText);
 			window.draw(game.gameOverScoreText);
 		}
-	}
-
-	void DeinializeGame(Game& game)
-	{
-
 	}
 }

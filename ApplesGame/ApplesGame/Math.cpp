@@ -14,17 +14,17 @@ namespace ApplesGame
 
 	bool DoShapesCollide(const Circle& circle1, const Circle& circle2)
 	{
-		float dx = circle1.position.x - circle2.position.x;
-		float dy = circle1.position.y - circle2.position.y;
-		float distance = sqrt(dx * dx + dy * dy);
+		const float deltaX = circle1.position.x - circle2.position.x;
+		const float deltaY = circle1.position.y - circle2.position.y;
+		const float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
 		return distance < circle1.radius + circle2.radius;
 	}
 
 	bool DoShapesCollide(const Rectangle& rect, const Circle& circle)
 	{
-		float dx = circle.position.x - std::max(rect.position.x, std::min(circle.position.x, rect.position.x + rect.size.x));
-		float dy = circle.position.y - std::max(rect.position.y, std::min(circle.position.y, rect.position.y + rect.size.y));
-		return (dx * dx + dy * dy) < (circle.radius * circle.radius);
+		const float deltaX = circle.position.x - std::max(rect.position.x, std::min(circle.position.x, rect.position.x + rect.size.x));
+		const float deltaY = circle.position.y - std::max(rect.position.y, std::min(circle.position.y, rect.position.y + rect.size.y));
+		return (deltaX * deltaX + deltaY * deltaY) < (circle.radius * circle.radius);
 	}
 
 	Position2D GetRandomPositionInRectangle(const Rectangle& rect)

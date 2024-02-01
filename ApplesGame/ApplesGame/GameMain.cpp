@@ -9,6 +9,7 @@ int main()
 	using namespace ApplesGame;
 	int seed = (int)time(nullptr);
 	srand(seed);
+
 	// Init window
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 
@@ -55,9 +56,6 @@ int main()
 
 		window.display();
 	}
-
-	// Deinitialization
-	DeinializeGame(game);
 
 	return 0;
 }
