@@ -3,6 +3,12 @@
 
 namespace ApplesGame
 {
+	int SetRandomNumberApples()
+	{
+		int randomNumberApples = (int)time(nullptr) % (MIN_NUM_APPLES - MAX_NUM_APPLES + 1) + MAX_NUM_APPLES;
+		return randomNumberApples;
+	}
+
 	void InitApple(Apple& apple, const Game& game)
 	{
 		apple.sprite.setTexture(game.appleTexture);

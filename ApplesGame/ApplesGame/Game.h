@@ -11,7 +11,7 @@ namespace ApplesGame
 	{
 		Rectangle screenRect;
 		Player player;
-		Apple apple[NUM_APPLES];
+		Apple apple[SetRandomNumberApples()];
 		Stone stone[NUM_STONES];
 
 		// Global game data
