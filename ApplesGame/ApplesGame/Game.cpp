@@ -10,7 +10,7 @@ namespace ApplesGame
 		SetPlayerDirection(game.player, PlayerDirection::Right);
 
 		// Init apples
-		for (Apple& apple : game.apple)
+		for (Apple& apple : game.apples)
 		{
 			SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
 		}
@@ -24,7 +24,7 @@ namespace ApplesGame
 		game.numEatenApples = 0;
 		game.isGameFinished = false;
 		game.timeSinceGameFinish = 0;
-		game.scoreText.setString("Score: " + std::to_string(game.numEatenApples));
+		game.scoreText.setString("Score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 	}
 
 	void UpdatePlayingState(Game& game, float deltaTime)
@@ -50,7 +50,7 @@ namespace ApplesGame
 		UpdatePlayer(game.player, deltaTime);
 
 		// Find player collisions with apples
-		for (Apple& apple : game.apple)
+		for (Apple& apple : game.apples)
 		{
 			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(apple)))
 			{
@@ -58,7 +58,7 @@ namespace ApplesGame
 				++game.numEatenApples;
 				SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 				game.appleEatSound.play();
-				game.scoreText.setString("Score: " + std::to_string(game.numEatenApples));
+				game.scoreText.setString("Score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace ApplesGame
 		game.isGameFinished = true;
 		game.timeSinceGameFinish = 0.f;
 		game.deathSound.play();
-		game.gameOverScoreText.setString("Your scores: " + std::to_string(game.numEatenApples));
+		game.gameOverScoreText.setString("Your scores: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 	}
 
 	void UpdateGameoverState(Game& game, float deltaTime)
@@ -117,8 +117,15 @@ namespace ApplesGame
 
 		InitPlayer(game.player, game);
 
+		// Init random number of apples
+		for (int i = 0; i < game.numApples; ++i)
+		{
+			Apple apple(i);
+			game.apples.push_back(apple);
+		}
+
 		// Init apples
-		for (Apple& apple : game.apple)
+		for (Apple& apple : game.apples)
 		{
 			InitApple(apple, game);
 		}
@@ -159,7 +166,7 @@ namespace ApplesGame
 		game.gameOverScoreText.setFont(game.font);
 		game.gameOverScoreText.setCharacterSize(30);
 		game.gameOverScoreText.setFillColor(sf::Color::White);
-		game.gameOverScoreText.setString("Your score: " + std::to_string(game.numEatenApples));
+		game.gameOverScoreText.setString("Your score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 		game.gameOverScoreText.setPosition(SCREEN_WIDTH / 2.f - game.controlsHintText.getGlobalBounds().width / 4.f, SCREEN_HEIGHT / 2.f + 50.f);
 
 		StartPlayingState(game);
@@ -186,7 +193,7 @@ namespace ApplesGame
 		// Draw game objects
 		DrawPlayer(game.player, window);
 
-		for (Apple& apple : game.apple)
+		for (Apple& apple : game.apples)
 		{
 			DrawApple(apple, window);
 		}

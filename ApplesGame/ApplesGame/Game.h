@@ -11,10 +11,11 @@ namespace ApplesGame
 	{
 		Rectangle screenRect;
 		Player player;
-		Apple apple[SetRandomNumberApples()];
+		std::vector<Apple> apples; // Создаем вектор яблок
 		Stone stone[NUM_STONES];
 
 		// Global game data
+		int numApples = SetRandomNumberApples();
 		int numEatenApples;
 		float deltaTime;
 		bool isGameFinished = false;

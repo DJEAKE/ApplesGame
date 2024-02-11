@@ -6,7 +6,7 @@ namespace ApplesGame
 	const std::string RESOURCES_PATH = "Resources/";
 	const int SCREEN_WIDTH = 1280;
 	const int SCREEN_HEIGHT = 720;
-	const int MIN_NUM_APPLES = 15;
+	const int MIN_NUM_APPLES = 10;
 	const int MAX_NUM_APPLES = 25;
 	const int NUM_STONES = 5;
 	const float PLAYER_SIZE = 35.5f;
