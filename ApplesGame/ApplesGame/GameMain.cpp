@@ -2,30 +2,40 @@
 #include <SFML/Audio.hpp>
 #include "Constans.h"
 #include "Game.h"
+#include "GameMode.h"
 
 
 int main()
 {
 	using namespace ApplesGame;
+
 	int seed = (int)time(nullptr);
 	srand(seed);
 
 	// Init window
+	sf::RenderWindow gameSettingsWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 
 	// Game initialization
 	Game game;
 	InitGame(game);
 
+
+
+
+
 	// Init game clocks
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
 
-	sf::RenderWindow gameSettingMenu(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
-
+	
 	// Main loop
 	while (window.isOpen())
 	{
+			SetGameModeSetting(game, gameSettingsWindow);
+			DrawGameSettingMenu(game, gameSettingsWindow);
+			gameSettingsWindow.display();
+
 		// Reduce framerate to not spam CPU and GPU
 		sf::sleep(sf::milliseconds(16));
 
@@ -55,7 +65,6 @@ int main()
 		// Draw game
 		window.clear();
 		DrawGame(game, window);
-
 		window.display();
 	}
 
