@@ -84,6 +84,7 @@ namespace ApplesGame
 		game.timeSinceGameFinish = 0.f;
 		game.deathSound.play();
 		game.gameOverScoreText.setString("Your scores: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
+		game.numApples = SetRandomNumberApples();
 	}
 
 	void UpdateGameoverState(Game& game, float deltaTime)
