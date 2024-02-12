@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "GameMode.h"
 #include <cassert>
 
 namespace ApplesGame
@@ -54,10 +55,16 @@ namespace ApplesGame
 		{
 			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(apple)))
 			{
-				SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
-				++game.numEatenApples;
-				SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 				game.appleEatSound.play();
+				if (game.GameModeSettings & GameModeSettingsInBitMask::InifiniteNumApples)
+				{
+				SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
+				}
+				else { ++game.numEatenApples; }
+				if (game.GameModeSettings & GameModeSettingsInBitMask::PlayerAcceleration)
+				{
+					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
+				}
 				game.scoreText.setString("Score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 			}
 		}

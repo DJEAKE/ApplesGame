@@ -11,15 +11,18 @@ namespace ApplesGame
 	{
 		Rectangle screenRect;
 		Player player;
-		std::vector<Apple> apples; // Создаем вектор яблок
+		std::vector<Apple> apples;
 		Stone stone[NUM_STONES];
 
 		// Global game data
 		int numApples = SetRandomNumberApples();
 		int numEatenApples;
+		int GameModeSettings = 0;
+
 		float deltaTime;
-		bool isGameFinished = false;
 		float timeSinceGameFinish = 0.f;
+		bool isGameFinished = false;
+		
 		sf::Sound appleEatSound;
 		sf::Sound deathSound;
 		sf::RectangleShape background;
