@@ -21,6 +21,8 @@ int main()
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
 
+	sf::RenderWindow gameSettingMenu(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
+
 	// Main loop
 	while (window.isOpen())
 	{

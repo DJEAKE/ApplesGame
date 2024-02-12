@@ -56,11 +56,8 @@ namespace ApplesGame
 			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(apple)))
 			{
 				game.appleEatSound.play();
-				if (game.GameModeSettings & GameModeSettingsInBitMask::InifiniteNumApples)
-				{
 				SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
-				}
-				else { ++game.numEatenApples; }
+				++game.numEatenApples;
 				if (game.GameModeSettings & GameModeSettingsInBitMask::PlayerAcceleration)
 				{
 					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
