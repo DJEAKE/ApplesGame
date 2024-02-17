@@ -4,7 +4,6 @@
 #include "Game.h"
 #include "GameMode.h"
 
-
 int main()
 {
 	using namespace ApplesGame;
@@ -13,29 +12,19 @@ int main()
 	srand(seed);
 
 	// Init window
-	sf::RenderWindow gameSettingsWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Apples game! by DJEAKE");
 
 	// Game initialization
 	Game game;
 	InitGame(game);
 
-
-
-
-
 	// Init game clocks
 	sf::Clock gameClock;
 	float lastTime = gameClock.getElapsedTime().asSeconds();
-
 	
 	// Main loop
 	while (window.isOpen())
 	{
-			SetGameModeSetting(game, gameSettingsWindow);
-			DrawGameSettingMenu(game, gameSettingsWindow);
-			gameSettingsWindow.display();
-
 		// Reduce framerate to not spam CPU and GPU
 		sf::sleep(sf::milliseconds(16));
 

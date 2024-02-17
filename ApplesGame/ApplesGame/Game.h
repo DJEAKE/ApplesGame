@@ -22,6 +22,8 @@ namespace ApplesGame
 		float deltaTime;
 		float timeSinceGameFinish = 0.f;
 		bool isGameFinished = false;
+		bool isSettingSelected = false;
+		bool isInfiniteAppleCount = true;
 		
 		sf::Sound appleEatSound;
 		sf::Sound deathSound;

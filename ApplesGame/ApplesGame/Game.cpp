@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "GameMode.h"
 #include <cassert>
-
 namespace ApplesGame
 {
 	void StartPlayingState(Game& game)
@@ -51,20 +50,37 @@ namespace ApplesGame
 		UpdatePlayer(game.player, deltaTime);
 
 		// Find player collisions with apples
-		for (Apple& apple : game.apples)
+		for (auto apple = game.apples.begin(); apple != game.apples.end(); )
 		{
-			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(apple)))
+			if (DoShapesCollide(GetPlayerCollider(game.player), GetAppleCollider(*apple)))
 			{
 				game.appleEatSound.play();
-				SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
 				++game.numEatenApples;
 				if (game.GameModeSettings & GameModeSettingsInBitMask::PlayerAcceleration)
 				{
 					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
 				}
+				else
+				{
+					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player));
+				}
+				if (game.GameModeSettings & GameModeSettingsInBitMask::InifiniteNumApples)
+				{
+					SetApplePosition(*apple, GetRandomPositionInRectangle(game.screenRect));
+					++apple;
+				}
+				else
+				{
+					apple = game.apples.erase(apple);
+				}
 				game.scoreText.setString("Score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 			}
+			else
+			{
+				++apple;
+			}
 		}
+
 
 		// Find player collisions with stones
 		for (Stone& stone : game.stone)
@@ -109,6 +125,7 @@ namespace ApplesGame
 
 	void InitGame(Game& game)
 	{
+
 		// Load resources
 		assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
 		assert(game.appleTexture.loadFromFile(RESOURCES_PATH + "\\Apple.png"));
@@ -195,29 +212,37 @@ namespace ApplesGame
 		// Draw background
 		window.draw(game.background);
 
-		// Draw game objects
-		DrawPlayer(game.player, window);
-
-		for (Apple& apple : game.apples)
+		if (game.isSettingSelected == false)
 		{
-			DrawApple(apple, window);
-		}
-
-		for (Stone& stone : game.stone)
-		{
-			DrawStone(stone, window);
-		}
-
-		// Draw texts
-		if (!game.isGameFinished)
-		{
-			window.draw(game.scoreText);
-			window.draw(game.controlsHintText);
+			SetGameModeSetting(game, window);
+			DrawGameSettingMenu(game, window);
 		}
 		else
 		{
-			window.draw(game.gameOverText);
-			window.draw(game.gameOverScoreText);
+			// Draw game objects
+			DrawPlayer(game.player, window);
+
+			for (Apple& apple : game.apples)
+			{
+				DrawApple(apple, window);
+			}
+
+			for (Stone& stone : game.stone)
+			{
+				DrawStone(stone, window);
+			}
+
+			// Draw texts
+			if (!game.isGameFinished)
+			{
+				window.draw(game.scoreText);
+				window.draw(game.controlsHintText);
+			}
+			else
+			{
+				window.draw(game.gameOverText);
+			}
+
 		}
 	}
 }
