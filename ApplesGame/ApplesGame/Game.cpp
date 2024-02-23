@@ -81,7 +81,6 @@ namespace ApplesGame
 			}
 		}
 
-
 		// Find player collisions with stones
 		for (Stone& stone : game.stone)
 		{
@@ -104,7 +103,21 @@ namespace ApplesGame
 		game.timeSinceGameFinish = 0.f;
 		game.deathSound.play();
 		game.gameOverScoreText.setString("Your scores: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
+		game.apples.clear();
 		game.numApples = SetRandomNumberApples();
+
+		// Init random number of apples
+		for (int i = 0; i < game.numApples; ++i)
+		{
+			Apple apple(i);
+			game.apples.push_back(apple);
+		}
+
+		// Init apples
+		for (Apple& apple : game.apples)
+		{
+			InitApple(apple, game);
+		}
 	}
 
 	void UpdateGameoverState(Game& game, float deltaTime)
@@ -125,7 +138,6 @@ namespace ApplesGame
 
 	void InitGame(Game& game)
 	{
-
 		// Load resources
 		assert(game.playerTexture.loadFromFile(RESOURCES_PATH + "\\Player.png"));
 		assert(game.appleTexture.loadFromFile(RESOURCES_PATH + "\\Apple.png"));
@@ -241,6 +253,11 @@ namespace ApplesGame
 			else
 			{
 				window.draw(game.gameOverText);
+
+				for (Apple& apple : game.apples)
+				{
+					DrawApple(apple, window);
+				}
 			}
 
 		}
