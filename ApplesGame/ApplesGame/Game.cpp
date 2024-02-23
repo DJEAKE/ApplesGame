@@ -175,10 +175,6 @@ namespace ApplesGame
 		game.background.setFillColor(sf::Color::Black);
 		game.background.setPosition(0.f, 0.f);
 
-		// Init sounds
-		game.appleEatSound.setBuffer(game.eatAppleSoundBuffer);
-		game.deathSound.setBuffer(game.gameOverSoundBuffer);
-
 		// Init texts
 		game.scoreText.setFont(game.font);
 		game.scoreText.setCharacterSize(20);
@@ -202,6 +198,12 @@ namespace ApplesGame
 		game.gameOverScoreText.setFillColor(sf::Color::White);
 		game.gameOverScoreText.setString("Your score: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
 		game.gameOverScoreText.setPosition(SCREEN_WIDTH / 2.f - game.controlsHintText.getGlobalBounds().width / 4.f, SCREEN_HEIGHT / 2.f + 50.f);
+
+		// Init sounds
+		game.appleEatSound.setBuffer(game.eatAppleSoundBuffer);
+		game.deathSound.setBuffer(game.gameOverSoundBuffer);
+
+
 
 		StartPlayingState(game);
 	}
