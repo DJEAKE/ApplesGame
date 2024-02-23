@@ -49,7 +49,10 @@ int main()
 			}
 		}
 
-		UpdateGame(game, deltaTime);
+		if (game.isSettingSelected == true)
+		{
+			UpdateGame(game, deltaTime);
+		}
 
 		// Draw game
 		window.clear();

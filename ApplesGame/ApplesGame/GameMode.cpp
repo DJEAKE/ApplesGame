@@ -8,28 +8,23 @@ void ApplesGame::SetGameModeSetting(Game& game, sf::RenderWindow& window)
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) || sf::Keyboard::isKeyPressed(sf::Keyboard::F1) && game.isGameFinished == false)
 	{
 		game.GameModeSettings |= GameModeSettingsInBitMask::PlayerAcceleration;
-		game.isSettingSelected = true;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) || sf::Keyboard::isKeyPressed(sf::Keyboard::F2) &&  !game.isGameFinished)
 	{
 		game.GameModeSettings &= ~GameModeSettingsInBitMask::PlayerAcceleration;
-		game.isSettingSelected = true;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) || sf::Keyboard::isKeyPressed(sf::Keyboard::F3) && !game.isGameFinished)
 	{
 		game.GameModeSettings |= GameModeSettingsInBitMask::InifiniteNumApples;
-		game.isSettingSelected = true;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) || sf::Keyboard::isKeyPressed(sf::Keyboard::F4) && !game.isGameFinished)
 	{
 		game.GameModeSettings &= ~GameModeSettingsInBitMask::InifiniteNumApples;
-		game.isSettingSelected = true;
 		game.isInfiniteAppleCount = false;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && !game.isGameFinished)
 	{
-		game.isGameFinished = true;
-		window.close();
+		game.isSettingSelected = true;
 	}
 }
 
