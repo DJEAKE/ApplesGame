@@ -18,23 +18,21 @@ namespace ApplesGame
 		int numApples = SetRandomNumberApples();
 		int numEatenApples;
 		int GameModeSettings = 0;
-
 		float deltaTime;
 		float timeSinceGameFinish = 0.f;
 		bool isGameFinished = false;
 		bool isSettingSelected = false;
 		bool isInfiniteAppleCount = true;
 		
-		sf::Sound appleEatSound;
-		sf::Sound deathSound;
-		sf::RectangleShape background;
-
 		// Resources
 		sf::Texture playerTexture;
 		sf::Texture appleTexture;
 		sf::Texture stoneTexture;
 		sf::SoundBuffer eatAppleSoundBuffer;
 		sf::SoundBuffer gameOverSoundBuffer;
+		sf::Sound appleEatSound;
+		sf::Sound deathSound;
+		sf::RectangleShape background;
 
 		// UI data
 		sf::Font font;

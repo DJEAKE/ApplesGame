@@ -9,13 +9,13 @@ namespace ApplesGame
 		SetPlayerSpeed(game.player, INITIAL_SPEED);
 		SetPlayerDirection(game.player, PlayerDirection::Right);
 
-		// Init apples
+		// Setting the apples in a random position
 		for (Apple& apple : game.apples)
 		{
 			SetApplePosition(apple, GetRandomPositionInRectangle(game.screenRect));
 		}
 
-		// Init stones
+		// Setting stones in a random position
 		for (Stone& stone : game.stone)
 		{
 			SetStonePosition(stone, GetRandomPositionInRectangle(game.screenRect));
@@ -56,6 +56,8 @@ namespace ApplesGame
 			{
 				game.appleEatSound.play();
 				++game.numEatenApples;
+
+				// Checking the mode whether the player is playing with acceleration 
 				if (game.GameModeSettings & GameModeSettingsInBitMask::PlayerAcceleration)
 				{
 					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player) + ACCELERATION);
@@ -64,6 +66,8 @@ namespace ApplesGame
 				{
 					SetPlayerSpeed(game.player, GetPlayerSpeed(game.player));
 				}
+
+				// Checking the mode whether the player is playing with infinite apples
 				if (game.GameModeSettings & GameModeSettingsInBitMask::InifiniteNumApples)
 				{
 					SetApplePosition(*apple, GetRandomPositionInRectangle(game.screenRect));
@@ -106,14 +110,14 @@ namespace ApplesGame
 		game.apples.clear();
 		game.numApples = SetRandomNumberApples();
 
-		// Init random number of apples
+		// Reset the previous random obtained value of apples and get a new one 
 		for (int i = 0; i < game.numApples; ++i)
 		{
 			Apple apple(i);
 			game.apples.push_back(apple);
 		}
 
-		// Init apples
+		// Init new apples
 		for (Apple& apple : game.apples)
 		{
 			InitApple(apple, game);
@@ -131,7 +135,6 @@ namespace ApplesGame
 		{
 			// Reset backgound
 			game.background.setFillColor(sf::Color::Black);
-
 			StartPlayingState(game);
 		}
 	}
@@ -203,8 +206,6 @@ namespace ApplesGame
 		game.appleEatSound.setBuffer(game.eatAppleSoundBuffer);
 		game.deathSound.setBuffer(game.gameOverSoundBuffer);
 
-
-
 		StartPlayingState(game);
 	}
 
@@ -256,6 +257,7 @@ namespace ApplesGame
 			{
 				window.draw(game.gameOverText);
 
+				// Drawing new apples 
 				for (Apple& apple : game.apples)
 				{
 					DrawApple(apple, window);

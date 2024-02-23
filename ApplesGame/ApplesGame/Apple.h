@@ -8,9 +8,9 @@ namespace ApplesGame
 	struct Game;
 	struct Apple
 	{
-		int numApples;
 		Position2D applePosition;
 		sf::Sprite sprite;
+		int numApples;
 		Apple(int num) : numApples(num) {}
 	};
 

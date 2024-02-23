@@ -49,6 +49,7 @@ int main()
 			}
 		}
 
+		// The game will not update its state until the player selects the necessary settings for the game
 		if (game.isSettingSelected == true)
 		{
 			UpdateGame(game, deltaTime);
