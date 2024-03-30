@@ -16,14 +16,14 @@ namespace ApplesGame
 
 		// Global game data
 		int numApples = SetRandomNumberApples();
-		int numEatenApples;
+		int numEatenApples = 0;
 		int GameModeSettings = 0;
 		float deltaTime;
 		float timeSinceGameFinish = 0.f;
 		bool isGameFinished = false;
 		bool isSettingSelected = false;
 		bool isInfiniteAppleCount = true;
-		
+
 		// Resources
 		sf::Texture playerTexture;
 		sf::Texture appleTexture;

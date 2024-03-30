@@ -162,6 +162,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="GameMode.cpp" />
+    <ClCompile Include="GameScore.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Stone.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Constans.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameMode.h" />
+    <ClInclude Include="GameScore.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Stone.h" />
