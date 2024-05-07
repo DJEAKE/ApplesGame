@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "GameMode.h"
 #include <cassert>
+#include "GameScore.h"
+
 namespace ApplesGame
 {
 	void StartPlayingState(Game& game)
@@ -56,7 +58,6 @@ namespace ApplesGame
 			{
 				game.appleEatSound.play();
 				++game.numEatenApples;
-
 				// Checking the mode whether the player is playing with acceleration 
 				if (game.GameModeSettings & GameModeSettingsInBitMask::PlayerAcceleration)
 				{
@@ -106,7 +107,10 @@ namespace ApplesGame
 		game.isGameFinished = true;
 		game.timeSinceGameFinish = 0.f;
 		game.deathSound.play();
+		
 		game.gameOverScoreText.setString("Your scores: " + std::to_string(game.numEatenApples) + "\nNumber of apples: " + std::to_string(game.numApples));
+		UpdateScoreTable(game);
+
 		game.apples.clear();
 		game.numApples = SetRandomNumberApples();
 
@@ -153,6 +157,7 @@ namespace ApplesGame
 		game.screenRect = { 0.f, 0.f, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 		InitPlayer(game.player, game);
+		GenerateScoreTable(game);
 
 		// Init random number of apples
 		for (int i = 0; i < game.numApples; ++i)
@@ -256,12 +261,12 @@ namespace ApplesGame
 			else
 			{
 				window.draw(game.gameOverText);
-
 				// Drawing new apples 
 				for (Apple& apple : game.apples)
 				{
 					DrawApple(apple, window);
 				}
+				DrawScoreTable(game, window);
 			}
 
 		}

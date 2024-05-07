@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Apple.h"
 #include "Stone.h"
+#include <unordered_map>
 
 namespace ApplesGame
 {
@@ -13,6 +14,7 @@ namespace ApplesGame
 		Player player;
 		std::vector<Apple> apples;
 		Stone stone[NUM_STONES];
+		std::unordered_map<std::string, int> recordsTable;
 
 		// Global game data
 		int numApples = SetRandomNumberApples();

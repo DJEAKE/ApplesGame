@@ -9,8 +9,8 @@ namespace ApplesGame
 	// данные игрока из таблицы обновляются после смерти игрока
 	struct Game;
 
-	void GenerateScoreTable(Game& game, sf::RenderWindow& window);
-	void UpdateScoreTable(Game& game, sf::RenderWindow& window);
+	void GenerateScoreTable(Game& game);
+	void UpdateScoreTable(Game& game);
 	void DrawScoreTable(Game& game, sf::RenderWindow& window);
 
 }
